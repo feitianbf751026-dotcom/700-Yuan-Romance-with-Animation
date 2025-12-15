@@ -10,12 +10,13 @@ interface PlayerState {
   courage: number;          // 勇气值 (0 到 10)
   honesty: number;          // 诚实度 (0 到 10)
   path: string[];           // 选择路径，用于树状分支匹配
-  depth: number;            // 当前深度（0-9层）
+  depth: number;            // 当前深度（0-10层）
   stage: number;            // 当前阶段（向后兼容）
   branch: 'main' | 'cold' | 'romantic' | 'friend'; // 当前分支（向后兼容）
   hasConfessed: boolean;    // 是否坦白过
   specialEvents: string[];  // 触发的特殊事件
   relationshipType: 'stranger' | 'friend' | 'romantic' | 'complicated'; // 关系类型
+  intimacy: number;         // 亲密度 (0 到 100)，由综合算法计算
 }
 
 // ============================================================================
@@ -23,8 +24,7 @@ interface PlayerState {
 // ============================================================================
 
 const SCENE_0_PROLOGUE: SceneData = {
-  narrative: `【序章：那一夜】
-手机屏幕的光在昏暗的走廊里显得格外刺眼。APP上的订单显示"已接单"，备注栏里写着"全套服务，不过夜"。我盯着微信支付里刚刚转出去的700元，又抬头看了看面前的302号房门。
+  narrative: `手机屏幕的光在昏暗的走廊里显得格外刺眼。APP上的订单显示"已接单"，备注栏里写着"全套服务，不过夜"。我盯着微信支付里刚刚转出去的700元，又抬头看了看面前的302号房门。
 
 走廊里很安静，只有远处电梯运行的嗡嗡声。门缝里透出微弱的电视光，还有隐约的说话声——她在打电话，声音很轻，听不清内容，但能感觉到她的紧张。
 
@@ -46,8 +46,7 @@ const SCENE_0_PROLOGUE: SceneData = {
 
 // 分支1A：直接逃跑（懦弱路线）
 const SCENE_1A_PANIC: SceneData = {
-  narrative: `【第一章A：逃兵】
-我转身就跑。
+  narrative: `我转身就跑。
 
 电梯太慢，我直接冲下楼梯，三步并作两步，一口气跑到街上。雨开始下了，细密的雨丝打在脸上，冰凉刺骨。我任由雨水冲刷，心跳如擂鼓，呼吸急促得像是要窒息。
 
@@ -68,8 +67,7 @@ const SCENE_1A_PANIC: SceneData = {
 };
 
 const SCENE_1A_LIFE: SceneData = {
-  narrative: `【第二章A：逃避的生活】
-接下来的一个月，我把自己埋在工作里。加班到深夜，周末也待在办公室，用忙碌麻痹自己。
+  narrative: `接下来的一个月，我把自己埋在工作里。加班到深夜，周末也待在办公室，用忙碌麻痹自己。
 
 但每到深夜，那个问号就会冒出来：她怎么样了？她会不会恨我？还是早就把我忘了？
 
@@ -87,8 +85,7 @@ const SCENE_1A_LIFE: SceneData = {
 };
 
 const SCENE_1A_DEEP_WORK: SceneData = {
-  narrative: `【第二章A-2：更深层的逃避】
-我选择了继续逃避。工作成了我唯一的避风港。
+  narrative: `我选择了继续逃避。工作成了我唯一的避风港。
 
 我接了更多的项目，主动申请加班，甚至周末也来公司。同事们都说我变了，变得"上进"了。只有我知道，我只是在逃避。
 
@@ -108,8 +105,7 @@ const SCENE_1A_DEEP_WORK: SceneData = {
 };
 
 const SCENE_1A_TRY_CHANGE: SceneData = {
-  narrative: `【第二章A-3：尝试改变】
-我决定尝试改变。哪怕只是一小步。
+  narrative: `我决定尝试改变。哪怕只是一小步。
 
 我开始强迫自己参加公司的团建活动，开始主动和同事聊天，开始尝试在社交软件上主动打招呼。
 
@@ -131,8 +127,7 @@ const SCENE_1A_TRY_CHANGE: SceneData = {
 };
 
 const SCENE_1A_STRUGGLE: SceneData = {
-  narrative: `【第三章A：内心的挣扎】
-两个月过去了。我尝试过改变——去健身房，参加社交活动，甚至下载了新的交友软件。
+  narrative: `两个月过去了。我尝试过改变——去健身房，参加社交活动，甚至下载了新的交友软件。
 
 但每次想要主动的时候，那个夜晚的恐惧就会回来。我害怕被拒绝，害怕被看穿，害怕再次证明自己是个懦夫。
 
@@ -154,8 +149,7 @@ const SCENE_1A_STRUGGLE: SceneData = {
 };
 
 const SCENE_1A_CONFRONT: SceneData = {
-  narrative: `【第四章A：第一次接触】
-我深吸一口气，走了过去。每一步都像是踩在棉花上，软绵绵的，使不上力。
+  narrative: `我深吸一口气，走了过去。每一步都像是踩在棉花上，软绵绵的，使不上力。
 
 "你好……"我的声音有点颤抖，几乎听不见，"你还记得我吗？"
 
@@ -183,8 +177,7 @@ const SCENE_1A_CONFRONT: SceneData = {
 };
 
 const SCENE_1A_FIRST_MEET: SceneData = {
-  narrative: `【第五章A：第一次正式见面】
-我们去了公司附近的一家咖啡店。店面不大，但很安静，角落里摆着几盆绿植，阳光从落地窗洒进来，在地板上投下斑驳的光影。
+  narrative: `我们去了公司附近的一家咖啡店。店面不大，但很安静，角落里摆着几盆绿植，阳光从落地窗洒进来，在地板上投下斑驳的光影。
 
 我点了两杯拿铁，找了个靠窗的位置。她在我对面坐下，脱掉外套，露出里面简单的白衬衫。
 
@@ -208,8 +201,7 @@ const SCENE_1A_FIRST_MEET: SceneData = {
 };
 
 const SCENE_1A_BUILDING_TRUST: SceneData = {
-  narrative: `【第六章A：建立信任】
-从那天起，我们开始经常见面。有时候是咖啡店，有时候是公司食堂，有时候是下班后的散步。
+  narrative: `从那天起，我们开始经常见面。有时候是咖啡店，有时候是公司食堂，有时候是下班后的散步。
 
 我慢慢了解到，她叫琳，是个设计师。她喜欢画画，喜欢看日落，喜欢在深夜听音乐。她告诉我，她画的第一幅画是给妈妈的生日礼物，她最喜欢的日落是在海边看到的，她深夜听的音乐总是很悲伤。
 
@@ -231,8 +223,7 @@ const SCENE_1A_BUILDING_TRUST: SceneData = {
 };
 
 const SCENE_1A_OBSERVE: SceneData = {
-  narrative: `【第四章A：默默观察】
-我还是没有勇气上前。我看着她走进电梯，看着电梯门关上，看着数字从1跳到11。
+  narrative: `我还是没有勇气上前。我看着她走进电梯，看着电梯门关上，看着数字从1跳到11。
 
 接下来的几天，我开始留意她。我发现她每天早上8点半到公司，中午12点在食堂吃饭，晚上经常加班到很晚。
 
@@ -254,8 +245,7 @@ const SCENE_1A_OBSERVE: SceneData = {
 };
 
 const SCENE_1A_ELEVATOR_TALK: SceneData = {
-  narrative: `【第五章A：电梯里的对话】
-"12楼？"她笑了，"那我们以后可能会经常遇到呢。"
+  narrative: `"12楼？"她笑了，"那我们以后可能会经常遇到呢。"
 
 电梯到了11楼，她准备出去，但突然回头看了我一眼。
 
@@ -279,8 +269,7 @@ const SCENE_1A_ELEVATOR_TALK: SceneData = {
 };
 
 const SCENE_1A_STALKING: SceneData = {
-  narrative: `【第五章A：继续逃避】
-我还是选择了逃避。我假装没听见，盯着楼层数字，直到电梯到了12楼。
+  narrative: `我还是选择了逃避。我假装没听见，盯着楼层数字，直到电梯到了12楼。
 
 接下来的几周，我继续观察她。我知道她喜欢在便利店买三明治当早餐，知道她中午总是点那家店的麻辣烫，知道她晚上经常加班到很晚。
 
@@ -303,8 +292,7 @@ const SCENE_1A_STALKING: SceneData = {
 
 // 分支1B：发消息道歉（诚实路线）
 const SCENE_1B_MESSAGE: SceneData = {
-  narrative: `【第一章B：短信】
-我的手指在屏幕上打字，删了又写，写了又删。走廊里的感应灯灭了，我站在黑暗中，只有手机屏幕的光照亮我的脸。
+  narrative: `我的手指在屏幕上打字，删了又写，写了又删。走廊里的感应灯灭了，我站在黑暗中，只有手机屏幕的光照亮我的脸。
 
 最后发出去的只有简单的几个字：
 
@@ -336,8 +324,7 @@ const SCENE_1B_MESSAGE: SceneData = {
 
 // 1B分支：删除好友后的发展
 const SCENE_1B_DELETED: SceneData = {
-  narrative: `【第二章B：切断联系】
-我删除了她的好友。那一刻，我松了一口气，但心里却空落落的。
+  narrative: `我删除了她的好友。那一刻，我松了一口气，但心里却空落落的。
 
 接下来的日子，我试图忘记那个夜晚，忘记那个700块，忘记那个我永远不知道名字的她。
 
@@ -357,8 +344,7 @@ const SCENE_1B_DELETED: SceneData = {
 };
 
 const SCENE_1B_REGRET: SceneData = {
-  narrative: `【第三章B：后悔】
-我删除了她，但后悔很快就来了。
+  narrative: `我删除了她，但后悔很快就来了。
 
 我开始在微信里搜索她的账号，想要重新加她。但我发现，我已经不记得她的微信号了。
 
@@ -380,8 +366,7 @@ const SCENE_1B_REGRET: SceneData = {
 };
 
 const SCENE_1B_APOLOGY: SceneData = {
-  narrative: `【第四章B：迟来的道歉】
-我走了过去。每一步都像是踩在刀刃上，但我知道，如果这次再逃避，就真的没有机会了。
+  narrative: `我走了过去。每一步都像是踩在刀刃上，但我知道，如果这次再逃避，就真的没有机会了。
 
 "你好……"我的声音有点颤抖，几乎听不清，"你还记得我吗？"
 
@@ -408,8 +393,7 @@ const SCENE_1B_APOLOGY: SceneData = {
 
 // 1B分支：继续聊天的后续
 const SCENE_1B_CHAT: SceneData = {
-  narrative: `【第二章B：深夜的对话】
-那晚，我们聊了很久。从晚上11点聊到凌晨3点，手机屏幕的光在黑暗中发着光，像是两个孤独的灵魂在互相取暖。
+  narrative: `那晚，我们聊了很久。从晚上11点聊到凌晨3点，手机屏幕的光在黑暗中发着光，像是两个孤独的灵魂在互相取暖。
 
 她告诉我，她叫琳，是个设计师。那段时间家里出了事，急需用钱，所以才接了那个单。但真到了那一刻，她也很害怕。
 
@@ -429,8 +413,7 @@ const SCENE_1B_CHAT: SceneData = {
 };
 
 const SCENE_1B_DEEP_CHAT: SceneData = {
-  narrative: `【第三章B：更深入的了解】
-从那天起，我们每天晚上都会聊天。有时候是文字，有时候是语音，有时候是视频。手机屏幕的光在黑暗中发着光，像是两个孤独的灵魂在互相取暖。
+  narrative: `从那天起，我们每天晚上都会聊天。有时候是文字，有时候是语音，有时候是视频。手机屏幕的光在黑暗中发着光，像是两个孤独的灵魂在互相取暖。
 
 我了解到，她喜欢画画，喜欢看日落，喜欢在深夜听音乐。她告诉我，她画的第一幅画是给妈妈的生日礼物，画的是她们家的小花园。她最喜欢的日落是在海边看到的，那时候她刚失恋，一个人坐在沙滩上，看着太阳慢慢沉入海平面。她深夜听的音乐总是很悲伤，她说，悲伤的音乐让她觉得不那么孤独。
 
@@ -450,8 +433,7 @@ const SCENE_1B_DEEP_CHAT: SceneData = {
 };
 
 const SCENE_1B_PLAN_MEET: SceneData = {
-  narrative: `【第四章B：计划见面】
-我们约好了见面。周六下午，咖啡店。
+  narrative: `我们约好了见面。周六下午，咖啡店。
 
 我提前半小时就到了，选了个靠窗的位置，点了两杯拿铁。
 
@@ -478,8 +460,7 @@ const SCENE_1B_PLAN_MEET: SceneData = {
 
 // 1B分支：咖啡约会的详细场景
 const SCENE_1B_COFFEE: SceneData = {
-  narrative: `【第二章B：咖啡店的相遇】
-周六下午，我提前半小时就到了咖啡店。选了个靠窗的位置，点了两杯拿铁，然后开始等待。
+  narrative: `周六下午，我提前半小时就到了咖啡店。选了个靠窗的位置，点了两杯拿铁，然后开始等待。
 
 窗外的阳光很好，洒在桌面上，把咖啡杯的影子拉得很长。我盯着那两杯咖啡，看着热气慢慢消散，心里七上八下的。
 
@@ -505,8 +486,7 @@ const SCENE_1B_COFFEE: SceneData = {
 };
 
 const SCENE_1B_COFFEE_TALK: SceneData = {
-  narrative: `【第三章B：咖啡店的对话】
-我们聊了很久。从下午2点聊到傍晚6点，窗外的阳光从明亮变成金黄，再变成橘红，最后消失在城市的边缘。
+  narrative: `我们聊了很久。从下午2点聊到傍晚6点，窗外的阳光从明亮变成金黄，再变成橘红，最后消失在城市的边缘。
 
 她告诉我，她叫琳，是个设计师。那段时间家里出了事，急需用钱，所以才接了那个单。但真到了那一刻，她也很害怕。
 
@@ -528,8 +508,7 @@ const SCENE_1B_COFFEE_TALK: SceneData = {
 };
 
 const SCENE_1B_REGULAR_MEET: SceneData = {
-  narrative: `【第四章B：定期见面】
-从那天起，我们开始定期见面。每周六下午，同一家咖啡店，同一个位置。
+  narrative: `从那天起，我们开始定期见面。每周六下午，同一家咖啡店，同一个位置。
 
 我们聊工作，聊生活，聊那些不敢对别人说的话。我慢慢了解到，她喜欢画画，喜欢看日落，喜欢在深夜听音乐。
 
@@ -552,8 +531,7 @@ const SCENE_1B_REGULAR_MEET: SceneData = {
 
 // 分支1C：犹豫很久才走（内疚路线）
 const SCENE_1C_HESITATE: SceneData = {
-  narrative: `【第一章C：犹豫】
-我站在门口站了很久，久到走廊的感应灯都灭了两次。
+  narrative: `我站在门口站了很久，久到走廊的感应灯都灭了两次。
 
 手机屏幕在黑暗中发着光，微信支付的记录刺眼地提醒着我——700元，已支付。那数字在屏幕上跳动着，像是在嘲笑我的犹豫。
 
@@ -574,8 +552,7 @@ const SCENE_1C_HESITATE: SceneData = {
 };
 
 const SCENE_1C_GUILT: SceneData = {
-  narrative: `【第二章C：内疚的生活】
-那700块钱成了我心里的一个结。一个解不开的结，一个让我夜不能寐的结。
+  narrative: `那700块钱成了我心里的一个结。一个解不开的结，一个让我夜不能寐的结。
 
 我时不时会点开她的微信头像，想看看她的朋友圈，想了解她是个什么样的人。她的头像是一张风景照，夕阳下的海边，很美。海浪拍打着沙滩，夕阳把天空染成橘红色，像是一幅画。
 
@@ -597,8 +574,7 @@ const SCENE_1C_GUILT: SceneData = {
 };
 
 const SCENE_1C_STALKING: SceneData = {
-  narrative: `【第三章C：继续观察】
-我选择了继续观察。我开始每天查看她的朋友圈，开始留意她的动态，开始试图从这些碎片中拼凑出她的生活。
+  narrative: `我选择了继续观察。我开始每天查看她的朋友圈，开始留意她的动态，开始试图从这些碎片中拼凑出她的生活。
 
 我发现她喜欢画画，喜欢看日落，喜欢在深夜听音乐。我发现她工作很努力，经常加班到很晚。我发现她似乎很孤独，朋友圈里很少有其他人的照片。
 
@@ -620,8 +596,7 @@ const SCENE_1C_STALKING: SceneData = {
 };
 
 const SCENE_1C_FIRST_MESSAGE: SceneData = {
-  narrative: `【第三章C：第一条消息】
-我鼓起勇气，给她发了条消息："你好，我是那天晚上的……我想为那天的事道歉。"
+  narrative: `我鼓起勇气，给她发了条消息："你好，我是那天晚上的……我想为那天的事道歉。"
 
 发送。
 
@@ -648,8 +623,7 @@ const SCENE_1C_FIRST_MESSAGE: SceneData = {
 
 
 const SCENE_1C_MEETING: SceneData = {
-  narrative: `【第四章C：第一次正式见面】
-我们约在公司楼下的咖啡店。我提前到了，选了个安静的角落，点了两杯拿铁。
+  narrative: `我们约在公司楼下的咖啡店。我提前到了，选了个安静的角落，点了两杯拿铁。
 
 窗外的阳光很好，透过百叶窗洒进来，在桌面上投下斑驳的光影。我盯着那两杯咖啡，看着热气慢慢消散，心里七上八下的。
 
@@ -675,8 +649,7 @@ const SCENE_1C_MEETING: SceneData = {
 };
 
 const SCENE_1C_DEEP_CONVERSATION: SceneData = {
-  narrative: `【第五章C：深入对话】
-我们继续聊下去。从下午2点聊到傍晚6点，窗外的阳光从明亮变成金黄，再变成橘红，最后消失在城市的边缘。
+  narrative: `我们继续聊下去。从下午2点聊到傍晚6点，窗外的阳光从明亮变成金黄，再变成橘红，最后消失在城市的边缘。
 
 她告诉我，她喜欢画画，喜欢看日落，喜欢在深夜听音乐。她告诉我，她画的第一幅画是给妈妈的生日礼物，画的是她们家的小花园，那时候她还在上小学。她最喜欢的日落是在海边看到的，那时候她刚失恋，一个人坐在沙滩上，看着太阳慢慢沉入海平面，眼泪和海水混在一起。她深夜听的音乐总是很悲伤，她说，悲伤的音乐让她觉得不那么孤独。
 
@@ -698,8 +671,7 @@ const SCENE_1C_DEEP_CONVERSATION: SceneData = {
 };
 
 const SCENE_1C_FRIENDSHIP: SceneData = {
-  narrative: `【第五章C：友谊的开始】
-我们选择了保持距离，只做朋友。
+  narrative: `我们选择了保持距离，只做朋友。
 
 从那天起，我们开始经常见面。有时候是咖啡店，有时候是公司食堂，有时候是下班后的散步。公园里的路灯已经亮了，昏黄的光洒在我们身上，把影子拉得很长。
 
@@ -727,7 +699,7 @@ const SCENE_1C_FRIENDSHIP: SceneData = {
 // ============================================================================
 
 const SCENE_2_REUNION: SceneData = {
-  narrative: `【第二章：便利店的重逢】
+  narrative: `
 三个月后。公司楼下的全家便利店。
 
 外面下着梅雨，细密的雨丝打在玻璃窗上，模糊了外面的世界。我等着微波炉热饭团，盯着那个旋转的盘子，听着"叮"的一声。
@@ -755,7 +727,7 @@ const SCENE_2_REUNION: SceneData = {
 // ============================================================================
 
 const SCENE_3_LUNCH: SceneData = {
-  narrative: `【第三章：意外的午餐】
+  narrative: `
 她认出我了。无论我怎么装，她那双眼睛里闪过的惊讶和复杂的情绪都出卖了一切。那眼神里有困惑，有好奇，还有一丝我读不懂的东西。
 
 公司食堂里人声鼎沸，但我们之间的空气却像是凝固了一样。她端着餐盘，站在我面前，餐盘里的饭菜还冒着热气。
@@ -781,12 +753,426 @@ const SCENE_3_LUNCH: SceneData = {
 };
 
 // ============================================================================
+// SCENE_2_REUNION和SCENE_3_LUNCH的后续场景（确保至少10层）
+// ============================================================================
+
+// 从SCENE_2_REUNION来的后续场景（第4-10层）
+const SCENE_2_1_AWKWARD: SceneData = {
+  narrative: `
+我僵硬地递过纸巾，不敢看她。手指触碰到她手背的瞬间，像是触电一样，我立刻缩了回来。
+
+"谢谢。"她接过纸巾，声音很轻。我能感觉到她在看我，但我就是不敢抬头。
+
+空气安静得可怕。微波炉又"叮"了一声，但这次，我们谁都没有动。
+
+"你……"她突然开口，声音里带着一丝犹豫，"是不是那天晚上的……"
+
+我猛地抬起头，对上了她的眼睛。那双眼睛里，有惊讶，有困惑，还有一丝我读不懂的东西。
+
+"我……"我想说什么，但话到嘴边，却一个字也说不出来。`,
+  dialogue: "（她认出来了……）",
+  speaker: "内心独白",
+  backgroundDescription: "convenience store, awkward moment, two people recognizing each other, tense atmosphere",
+  choices: [
+    { id: "2_1a", text: "承认，然后道歉", sentiment: "bold" },
+    { id: "2_1b", text: "继续装傻，快速离开", sentiment: "shy" }
+  ],
+  isEnding: false
+};
+
+const SCENE_2_2_RECOGNITION: SceneData = {
+  narrative: `
+"你是……那天的？"我鼓起勇气问。
+
+她愣了一下，然后笑了。那笑容很轻，但很真实。
+
+"嗯。"她点点头，"没想到会在这里遇到你。"
+
+我们站在便利店里，周围是来来往往的顾客，但那一刻，世界好像只剩下我们两个人。
+
+"那天……对不起。"我说，声音很轻，"我……"
+
+"不用道歉。"她打断我，"其实，我也很庆幸你没进来。因为那天，我也是第一次接那种单，我也很害怕。"
+
+我愣住了。她居然也害怕？我以为只有我一个人在害怕。`,
+  dialogue: "\"那……我们能聊聊吗？\"",
+  speaker: "我",
+  backgroundDescription: "convenience store, recognition moment, two people understanding each other, warm atmosphere",
+  choices: [
+    { id: "2_2a", text: "\"好，我知道附近有家咖啡店\"", sentiment: "bold" },
+    { id: "2_2b", text: "\"我……还是算了吧\"", sentiment: "shy" }
+  ],
+  isEnding: false
+};
+
+const SCENE_2_3_ESCAPE: SceneData = {
+  narrative: `
+我假装不认识，拿了饭团就走。脚步很快，快得像是要逃离什么。
+
+但我知道，我逃不掉的。那个夜晚，那700块钱，那个我永远无法忘记的她，会一直跟着我，像影子一样。
+
+我走到门口，推开门，外面的雨还在下。我站在屋檐下，看着雨丝打在玻璃上，模糊了里面的世界。
+
+身后传来脚步声，然后是她的声音："等等。"
+
+我停住了脚步，但没有回头。我知道，如果回头，我就再也走不了了。`,
+  dialogue: "（不能再逃了……）",
+  speaker: "内心独白",
+  backgroundDescription: "convenience store entrance, rainy day, protagonist hesitating, second chance",
+  choices: [
+    { id: "2_3a", text: "停下脚步，转过身", sentiment: "bold" },
+    { id: "2_3b", text: "继续走，不回头", sentiment: "cold" }
+  ],
+  isEnding: false
+};
+
+// 从SCENE_3_LUNCH来的后续场景（第4-10层）
+const SCENE_3_1_LUNCH_TALK: SceneData = {
+  narrative: `
+我们找了个靠窗的位置坐下。食堂里人声鼎沸，但我们之间的空气却像是凝固了一样。
+
+她先开口："所以，你也在12楼？"
+
+"嗯，技术部。"我说，声音比我想象的要平静。
+
+"技术部啊……"她笑了笑，"我们设计部经常要和你们对接，说不定以后会经常见面。"
+
+我们聊工作，聊生活，聊那些不敢对别人说的话。午餐时间很快就过去了，但我们谁都没有要离开的意思。
+
+"要不……"她突然说，声音很轻，"我们以后经常一起吃饭？"`,
+  dialogue: "\"好。\"",
+  speaker: "我",
+  backgroundDescription: "company cafeteria, lunch conversation, two people getting closer, warm atmosphere",
+  choices: [
+    { id: "3_1a", text: "\"我也想。\"", sentiment: "romantic" },
+    { id: "3_1b", text: "\"我……需要考虑一下\"", sentiment: "shy" }
+  ],
+  isEnding: false
+};
+
+const SCENE_3_2_REJECTION: SceneData = {
+  narrative: `
+"不好意思，我赶时间。"我说，声音很冷。
+
+她的笑容僵了一下，然后点点头："没关系，理解。"
+
+我拿起餐盘，转身就走。每一步都像是踩在刀刃上，但我没有回头。
+
+我知道，我又一次逃跑了。就像那天晚上一样。
+
+但这次，我知道我错过了什么。我错过了一个可能，一个机会，一个也许能改变我人生的瞬间。
+
+那700块钱，又成了我心里一个永远的问号。`,
+  dialogue: "（我又逃跑了……）",
+  speaker: "内心独白",
+  backgroundDescription: "company cafeteria, rejection moment, protagonist leaving, regretful atmosphere",
+  choices: [
+    { id: "3_2a", text: "后悔，想要回去道歉", sentiment: "bold" },
+    { id: "3_2b", text: "继续逃避，彻底放弃", sentiment: "cold" }
+  ],
+  isEnding: false
+};
+
+const SCENE_3_3_APOLOGY: SceneData = {
+  narrative: `
+"其实我想先道个歉……"我说，声音很轻，"那天晚上，我到了门口，但我逃跑了。我删除了你的联系方式，我试图忘记你，但我做不到。"
+
+她安静地听完，没有说话。空气很安静，安静到我能听到自己的心跳声。
+
+"我明白了。"她终于开口，声音很轻，"你跟踪我，是因为你想了解我，但又不敢直接接近我，对吗？"
+
+我点了点头，不敢看她。
+
+"其实，我也一直在观察你。"她说，"在公司里，在电梯里，在食堂里。我一直在想，你会不会主动和我说话。"
+
+我们坐在食堂里，周围是嘈杂的说话声，但那一刻，世界好像只剩下我们两个人。`,
+  dialogue: "\"所以，我们都在等对方先开口？\"",
+  speaker: "我",
+  backgroundDescription: "company cafeteria, apology moment, two people understanding each other, emotional atmosphere",
+  choices: [
+    { id: "3_3a", text: "\"那现在，我们可以重新开始吗？\"", sentiment: "bold" },
+    { id: "3_3b", text: "\"我……还是有点害怕\"", sentiment: "shy" }
+  ],
+  isEnding: false
+};
+
+// ============================================================================
+// SCENE_2_REUNION和SCENE_3_LUNCH的后续场景（第5-10层）
+// ============================================================================
+
+// 从SCENE_2_1_AWKWARD来的后续场景（第5层）
+const SCENE_2_1A_CONFESSION: SceneData = {
+  narrative: `
+我深吸一口气，终于抬起头看着她。
+
+"对不起。"我说，声音很轻，"那天晚上，我到了门口，但我逃跑了。我删除了你的联系方式，我试图忘记你，但我做不到。"
+
+她安静地听完，没有说话。空气很安静，安静到我能听到自己的心跳声。
+
+"我明白了。"她终于开口，声音很轻，"你跟踪我，是因为你想了解我，但又不敢直接接近我，对吗？"
+
+我点了点头，不敢看她。
+
+"其实，我也一直在观察你。"她说，"在公司里，在电梯里，在食堂里。我一直在想，你会不会主动和我说话。"`,
+  dialogue: "\"所以，我们都在等对方先开口？\"",
+  speaker: "我",
+  backgroundDescription: "convenience store, confession moment, two people understanding each other, emotional",
+  choices: [
+    { id: "2_1aa", text: "\"那现在，我们可以重新开始吗？\"", sentiment: "bold" },
+    { id: "2_1ab", text: "\"我……还是有点害怕\"", sentiment: "shy" }
+  ],
+  isEnding: false
+};
+
+const SCENE_2_1B_CONTINUE_ESCAPE: SceneData = {
+  narrative: `
+我继续装傻，快速离开。脚步很快，快得像是要逃离什么。
+
+但我知道，我逃不掉的。那个夜晚，那700块钱，那个我永远无法忘记的她，会一直跟着我，像影子一样。
+
+我走到门口，推开门，外面的雨还在下。我站在屋檐下，看着雨丝打在玻璃上，模糊了里面的世界。
+
+身后传来脚步声，然后是她的声音："等等。"
+
+我停住了脚步，但没有回头。我知道，如果回头，我就再也走不了了。`,
+  dialogue: "（不能再逃了……）",
+  speaker: "内心独白",
+  backgroundDescription: "convenience store entrance, rainy day, protagonist hesitating, second chance",
+  choices: [
+    { id: "2_1ba", text: "停下脚步，转过身", sentiment: "bold" },
+    { id: "2_1bb", text: "继续走，不回头", sentiment: "cold" }
+  ],
+  isEnding: false
+};
+
+// 从SCENE_2_2_RECOGNITION来的后续场景（第5层）
+const SCENE_2_2A_COFFEE_INVITATION: SceneData = {
+  narrative: `
+"好，我知道附近有家咖啡店。"我说，声音比我想象的要平静。
+
+我们走出便利店，外面的雨还在下。她撑开伞，我犹豫了一下，还是走了过去。
+
+"一起吧。"她说，声音很轻。
+
+我们并排走着，中间隔着一点距离，但那种距离让人感到安全，也让人感到温暖。
+
+咖啡店不远，就在街角。我们推门进去，找了个靠窗的位置坐下。
+
+"所以……"她先开口，声音很轻，"那天晚上，你为什么没进来？"`,
+  dialogue: "\"我到了门口，但突然意识到，我想要的不是那种关系。\"",
+  speaker: "我",
+  backgroundDescription: "coffee shop, rainy day, two people talking, intimate atmosphere",
+  choices: [
+    { id: "2_2aa", text: "继续深入聊下去", sentiment: "romantic" },
+    { id: "2_2ab", text: "保持距离，只做朋友", sentiment: "neutral" }
+  ],
+  isEnding: false
+};
+
+const SCENE_2_2B_HESITATE: SceneData = {
+  narrative: `
+"我……还是算了吧。"我说，声音很轻。
+
+她的笑容僵了一下，然后点点头："没关系，理解。"
+
+我拿起东西，转身就走。每一步都像是踩在刀刃上，但我没有回头。
+
+我知道，我又一次逃跑了。就像那天晚上一样。
+
+但这次，我知道我错过了什么。我错过了一个可能，一个机会，一个也许能改变我人生的瞬间。`,
+  dialogue: "（我又逃跑了……）",
+  speaker: "内心独白",
+  backgroundDescription: "convenience store, hesitation moment, protagonist leaving, regretful atmosphere",
+  choices: [
+    { id: "2_2ba", text: "后悔，想要回去道歉", sentiment: "bold" },
+    { id: "2_2bb", text: "继续逃避，彻底放弃", sentiment: "cold" }
+  ],
+  isEnding: false
+};
+
+// 从SCENE_2_3_ESCAPE来的后续场景（第5层）
+const SCENE_2_3A_TURN_BACK: SceneData = {
+  narrative: `
+我停下脚步，转过身。
+
+她站在便利店门口，手里拿着伞，看着我。雨丝打在她的头发上，在灯光下闪闪发光。
+
+"你……"她开口，声音很轻，"是不是那天晚上的……"
+
+我点了点头，不敢看她。
+
+"我……对不起。"我说，声音很轻，"我逃跑了。"
+
+她走过来，把伞举到我头上。那一刻，我们之间的距离突然变得很近，近到我能闻到她身上的茉莉花香。`,
+  dialogue: "\"不用道歉。其实，我也很庆幸你没进来。\"",
+  speaker: "琳",
+  backgroundDescription: "convenience store entrance, rainy day, two people under umbrella, intimate moment",
+  choices: [
+    { id: "2_3aa", text: "\"那……我们能聊聊吗？\"", sentiment: "bold" },
+    { id: "2_3ab", text: "\"我……还是算了吧\"", sentiment: "shy" }
+  ],
+  isEnding: false
+};
+
+const SCENE_2_3B_FINAL_ESCAPE: SceneData = {
+  narrative: `
+我继续走，不回头。脚步很快，快得像是要逃离什么。
+
+但我知道，我逃不掉的。那个夜晚，那700块钱，那个我永远无法忘记的她，会一直跟着我，像影子一样。
+
+我走到地铁站，买了票，上了车。车厢里人很多，但我却觉得比任何时候都孤独。
+
+那700块钱，成了我心里一个永远的秘密。一个只有我知道的秘密，一个永远不会对任何人提起的秘密。
+
+也许，这就是我的宿命。永远在边缘徘徊，永远不敢真正靠近任何人。`,
+  dialogue: "（再见了，琳……）",
+  speaker: "内心独白",
+  backgroundDescription: "subway station, protagonist leaving, final escape, melancholic atmosphere",
+  choices: [
+    { id: "2_3ba", text: "接受现实，继续生活", sentiment: "neutral" },
+    { id: "2_3bb", text: "决定回去找她，哪怕只是见一面", sentiment: "bold" }
+  ],
+  isEnding: false
+};
+
+// 从SCENE_3_1_LUNCH_TALK来的后续场景（第5层）
+const SCENE_3_1A_AGREE: SceneData = {
+  narrative: `
+"我也想。"我说，声音比我想象的要平静。
+
+她笑了，那笑容很轻，但很真实。
+
+从那天起，我们开始经常一起吃饭。有时候是食堂，有时候是公司附近的餐厅，有时候是便利店。
+
+我们聊工作，聊生活，聊那些不敢对别人说的话。我慢慢了解到，她叫琳，是个设计师。她喜欢画画，喜欢看日落，喜欢在深夜听音乐。
+
+她也开始了解我。我的工作，我的孤独，我的恐惧。
+
+"你知道吗？"有一天她对我说，声音很轻，但很坚定，"你其实不是孤独，你只是太害怕了。害怕被拒绝，害怕被伤害，害怕暴露真实的自己。"`,
+  dialogue: "\"也许，我们可以不只是朋友？\"",
+  speaker: "我",
+  backgroundDescription: "restaurant, regular lunch meetings, two people getting closer, warm atmosphere",
+  choices: [
+    { id: "3_1aa", text: "\"我想……不只是朋友\"", sentiment: "romantic" },
+    { id: "3_1ab", text: "\"好，朋友也很好\"", sentiment: "neutral" }
+  ],
+  isEnding: false
+};
+
+const SCENE_3_1B_HESITATE: SceneData = {
+  narrative: `
+"我……需要考虑一下。"我说，声音很轻。
+
+她的笑容僵了一下，然后点点头："没关系，理解。"
+
+我知道，我又一次逃跑了。就像那天晚上一样。
+
+但这次，我知道我错过了什么。我错过了一个可能，一个机会，一个也许能改变我人生的瞬间。
+
+那700块钱，又成了我心里一个永远的问号。`,
+  dialogue: "（我又逃跑了……）",
+  speaker: "内心独白",
+  backgroundDescription: "company cafeteria, hesitation moment, protagonist leaving, regretful atmosphere",
+  choices: [
+    { id: "3_1ba", text: "后悔，想要回去道歉", sentiment: "bold" },
+    { id: "3_1bb", text: "继续逃避，彻底放弃", sentiment: "cold" }
+  ],
+  isEnding: false
+};
+
+// 从SCENE_3_2_REJECTION来的后续场景（第5层）
+const SCENE_3_2A_REGRET: SceneData = {
+  narrative: `
+我后悔了。我想要回去道歉，想要告诉她，其实我想和她一起吃饭，想要告诉她，其实我很想了解她。
+
+但我没有。我继续走，继续逃避，继续用工作麻痹自己。
+
+那700块钱，成了我心里一个永远的问号。一个只有我知道的问号，一个永远不会对任何人提起的问号。
+
+也许，这就是我的宿命。永远在边缘徘徊，永远不敢真正靠近任何人。`,
+  dialogue: "（我又逃跑了……）",
+  speaker: "内心独白",
+  backgroundDescription: "office, protagonist working late, regretful atmosphere, lonely",
+  choices: [
+    { id: "3_2aa", text: "决定回去找她，哪怕只是道歉", sentiment: "bold" },
+    { id: "3_2ab", text: "继续逃避，彻底放弃", sentiment: "cold" }
+  ],
+  isEnding: false
+};
+
+const SCENE_3_2B_FINAL_ESCAPE: SceneData = {
+  narrative: `
+我选择了继续逃避，彻底放弃。
+
+时间是最好的良药，虽然伤口还在，但至少不再流血了。我学会了和孤独共处，学会了在人群中保持距离，学会了不再期待什么。
+
+那700块钱，成了我心里一个永远的秘密。一个只有我知道的秘密，一个永远不会对任何人提起的秘密。
+
+有时候，我会想，如果那天我接受了她的邀请，现在会是什么样子？但我知道，没有如果。有些选择，做错了就是做错了，错过了就是错过了。`,
+  dialogue: "（就这样吧……）",
+  speaker: "内心独白",
+  backgroundDescription: "city street at night, protagonist walking alone, accepting loneliness, melancholic but peaceful",
+  choices: [
+    { id: "3_2ba", text: "接受现实，继续生活", sentiment: "neutral" },
+    { id: "3_2bb", text: "决定回去找她，哪怕只是见一面", sentiment: "bold" }
+  ],
+  isEnding: false
+};
+
+// 从SCENE_3_3_APOLOGY来的后续场景（第5层）
+const SCENE_3_3A_NEW_START: SceneData = {
+  narrative: `
+"那现在，我们可以重新开始吗？"我问，声音很轻。
+
+她看着我，眼神很复杂。有理解，有同情，还有某种我读不懂的东西。
+
+"好。"她说，声音很轻，"我们重新开始。"
+
+从那天起，我们开始经常一起吃饭。有时候是食堂，有时候是公司附近的餐厅，有时候是便利店。
+
+我们聊工作，聊生活，聊那些不敢对别人说的话。我慢慢了解到，她叫琳，是个设计师。她喜欢画画，喜欢看日落，喜欢在深夜听音乐。
+
+她也开始了解我。我的工作，我的孤独，我的恐惧。`,
+  dialogue: "\"也许，我们可以不只是朋友？\"",
+  speaker: "我",
+  backgroundDescription: "restaurant, new beginning, two people getting closer, warm atmosphere",
+  choices: [
+    { id: "3_3aa", text: "\"我想……不只是朋友\"", sentiment: "romantic" },
+    { id: "3_3ab", text: "\"好，朋友也很好\"", sentiment: "neutral" }
+  ],
+  isEnding: false
+};
+
+const SCENE_3_3B_FEAR: SceneData = {
+  narrative: `
+"我……还是有点害怕。"我说，声音很轻。
+
+她看着我，眼神很温柔。
+
+"那我们就慢慢来。"她说，握住我的手，"不用着急，我们可以慢慢了解彼此。"
+
+从那天起，我们开始经常一起吃饭。有时候是食堂，有时候是公司附近的餐厅，有时候是便利店。
+
+我们聊工作，聊生活，聊那些不敢对别人说的话。我慢慢了解到，她叫琳，是个设计师。她喜欢画画，喜欢看日落，喜欢在深夜听音乐。
+
+她也开始了解我。我的工作，我的孤独，我的恐惧。`,
+  dialogue: "\"谢谢你理解我。\"",
+  speaker: "我",
+  backgroundDescription: "restaurant, understanding moment, two people supporting each other, warm atmosphere",
+  choices: [
+    { id: "3_3ba", text: "拥抱她，告诉她我会努力", sentiment: "romantic" },
+    { id: "3_3bb", text: "保持距离，只做朋友", sentiment: "neutral" }
+  ],
+  isEnding: false
+};
+
+// ============================================================================
 // 第4-7层：深度分支场景（树状结构的关键节点）
 // ============================================================================
 
 // 1A分支的第4层场景
 const SCENE_1A_4A_WORK_COLLAPSE: SceneData = {
-  narrative: `【第四章A-1：崩溃边缘】
+  narrative: `
 我选择了继续逃避。工作成了我唯一的避风港，但也是我的牢笼。
 
 我接了更多的项目，主动申请加班，甚至周末也来公司。同事们都说我变了，变得"上进"了。只有我知道，我只是在逃避。
@@ -808,7 +1194,7 @@ const SCENE_1A_4A_WORK_COLLAPSE: SceneData = {
 
 // 1A分支：崩溃后的场景（第5层）
 const SCENE_1A_5A_COLLAPSE_HOSPITAL: SceneData = {
-  narrative: `【第五章A-1：医院】
+  narrative: `
 我选择了继续逃避，直到身体彻底崩溃。
 
 那天早上，我在公司突然晕倒了。醒来的时候，我已经在医院里了。医生说我过度劳累，需要休息。
@@ -830,7 +1216,7 @@ const SCENE_1A_5A_COLLAPSE_HOSPITAL: SceneData = {
 
 // 1A分支：尝试改变后的社交场景（第5层）
 const SCENE_1A_5B_SOCIAL_ATTEMPT: SceneData = {
-  narrative: `【第五章A-2：社交尝试】
+  narrative: `
 我决定尝试改变。我开始参加公司的团建活动，开始主动和同事聊天，开始尝试在社交软件上主动打招呼。
 
 但每次，我都失败了。我害怕被拒绝，害怕说错话，害怕暴露自己的孤独。
@@ -851,7 +1237,7 @@ const SCENE_1A_5B_SOCIAL_ATTEMPT: SceneData = {
 };
 
 const SCENE_1A_4B_TRY_SOCIAL: SceneData = {
-  narrative: `【第四章A-2：尝试社交】
+  narrative: `
 我决定尝试改变。哪怕只是一小步。
 
 我开始强迫自己参加公司的团建活动，开始主动和同事聊天，开始尝试在社交软件上主动打招呼。
@@ -875,7 +1261,7 @@ const SCENE_1A_4B_TRY_SOCIAL: SceneData = {
 
 // 1A分支的第5层场景
 const SCENE_1A_5A_CAFETERIA_TALK: SceneData = {
-  narrative: `【第五章A-1：食堂对话】
+  narrative: `
 我鼓起勇气，走了过去。每一步都像是踩在刀刃上，但我知道，如果这次再逃避，就真的没有机会了。
 
 "你好……"我的声音有点颤抖，"你还记得我吗？"
@@ -896,7 +1282,7 @@ const SCENE_1A_5A_CAFETERIA_TALK: SceneData = {
 };
 
 const SCENE_1A_5B_AVOID_AGAIN: SceneData = {
-  narrative: `【第五章A-2：再次逃避】
+  narrative: `
 我还是选择了逃避。我假装没看见，快速走开，心跳如擂鼓。
 
 接下来的几天，我开始留意她。我发现她每天早上8点半到公司，中午12点在食堂吃饭，晚上经常加班到很晚。
@@ -918,7 +1304,7 @@ const SCENE_1A_5B_AVOID_AGAIN: SceneData = {
 
 // 1A分支的第6层场景
 const SCENE_1A_6A_COFFEE_DEEP: SceneData = {
-  narrative: `【第六章A-1：咖啡店的深入】
+  narrative: `
 我们去了公司附近的一家咖啡店。店面不大，但很安静，角落里摆着几盆绿植，阳光从落地窗洒进来，在地板上投下斑驳的光影。
 
 我点了两杯拿铁，找了个靠窗的位置。她在我对面坐下，脱掉外套，露出里面简单的白衬衫。
@@ -941,7 +1327,7 @@ const SCENE_1A_6A_COFFEE_DEEP: SceneData = {
 };
 
 const SCENE_1A_6B_ELEVATOR_CONTINUE: SceneData = {
-  narrative: `【第六章A-2：电梯里的继续】
+  narrative: `
 "12楼？"她笑了，"那我们以后可能会经常遇到呢。"
 
 电梯到了11楼，她准备出去，但突然回头看了我一眼。
@@ -967,7 +1353,7 @@ const SCENE_1A_6B_ELEVATOR_CONTINUE: SceneData = {
 
 // 1A分支的第7层场景
 const SCENE_1A_7A_RELATIONSHIP_GROW: SceneData = {
-  narrative: `【第七章A-1：关系的发展】
+  narrative: `
 从那天起，我们开始经常见面。有时候是咖啡店，有时候是公司食堂，有时候是下班后的散步。
 
 公园里的路灯已经亮了，昏黄的光洒在我们身上，把影子拉得很长。我们并排走着，中间隔着一点距离，但那种距离让人感到安全，也让人感到温暖。
@@ -988,7 +1374,7 @@ const SCENE_1A_7A_RELATIONSHIP_GROW: SceneData = {
 };
 
 const SCENE_1A_7B_STALKING_DISCOVERED: SceneData = {
-  narrative: `【第七章A-2：跟踪被发现】
+  narrative: `
 我还是选择了继续观察。我看着她走进电梯，看着电梯门关上，看着数字从1跳到11。
 
 接下来的几周，我继续观察她。我知道她喜欢在便利店买三明治当早餐，知道她中午总是点那家店的麻辣烫，知道她晚上经常加班到很晚。
@@ -1012,7 +1398,7 @@ const SCENE_1A_7B_STALKING_DISCOVERED: SceneData = {
 
 // 1A分支的第8层场景（接近结局）
 const SCENE_1A_8A_CONFESSION: SceneData = {
-  narrative: `【第八章A-1：坦白】
+  narrative: `
 我决定向她坦白一切。包括那700块钱，包括我的跟踪，包括我的恐惧和孤独。
 
 我们坐在公园的长椅上，夜色很浓，路灯的光很暗。我把所有的事情都说了出来，每一个字都像是从心底挖出来的。
@@ -1037,7 +1423,7 @@ const SCENE_1A_8A_CONFESSION: SceneData = {
 };
 
 const SCENE_1A_8B_FINAL_ESCAPE: SceneData = {
-  narrative: `【第八章A-2：最终逃避】
+  narrative: `
 我选择了再次逃避。我转身就跑，像那天晚上一样。
 
 她在我身后喊我的名字，但我没有回头。我跑得很快，快得像是要逃离什么。
@@ -1053,7 +1439,181 @@ const SCENE_1A_8B_FINAL_ESCAPE: SceneData = {
   speaker: "内心独白",
   backgroundDescription: "empty street at night, lonely figure running away, cold blue tones, melancholic",
   choices: [
-    { id: "1a_8c", text: "【结局】", sentiment: "neutral" }
+    { id: "1a_8c", text: "继续逃避，彻底离开这座城市", sentiment: "cold" },
+    { id: "1a_8d", text: "决定回去找她，哪怕只是道歉", sentiment: "bold" }
+  ],
+  isEnding: false
+};
+
+// ============================================================================
+// 第9层场景（1A分支）
+// ============================================================================
+
+const SCENE_1A_9A_REUNION_ATTEMPT: SceneData = {
+  narrative: `
+三个月后，我决定回去找她。
+
+我回到了那栋楼，回到了那家咖啡店，回到了我们曾经相遇的地方。但一切都变了。咖啡店换了老板，装修也变了。那家酒店也重新装修了，302号房的门牌号都换了。
+
+我开始在社交软件上寻找，试图找到她的痕迹。但我知道，即使找到了，我也没有勇气去联系。
+
+直到有一天，我在朋友圈里看到了一张照片。是她，和一个我不认识的男人，在海边看日落。照片下面写着："终于找到了对的人。"
+
+那一刻，我突然意识到，我错过了。`,
+  dialogue: "（也许，这就是我的报应……）",
+  speaker: "内心独白",
+  backgroundDescription: "empty coffee shop, protagonist sitting alone, melancholic atmosphere, regret",
+  choices: [
+    { id: "1a_9a", text: "给她发消息，哪怕只是道歉", sentiment: "bold" },
+    { id: "1a_9b", text: "彻底放弃，接受现实", sentiment: "sad" }
+  ],
+  isEnding: false
+};
+
+const SCENE_1A_9B_FINAL_GOODBYE: SceneData = {
+  narrative: `
+我选择了彻底离开。我删除了所有关于她的记忆，删除了那700块钱的转账记录，删除了那个夜晚所有的痕迹。
+
+我搬到了另一个城市，换了工作，换了手机号，换了所有能换的东西。我以为这样就能忘记，就能重新开始。
+
+但我知道，我忘不掉的。那个夜晚，那700块钱，那个我永远无法忘记的她，会一直跟着我，像影子一样。
+
+每次路过类似的酒店，每次看到米色风衣，每次闻到茉莉花香，我都会想起她。
+
+那700块钱，成了我心里永远的刺。
+
+一年后，我在新城市的咖啡店里，偶然听到了一首歌。歌词里唱着："有些人，错过了就是一辈子。"
+
+我放下咖啡，看着窗外。这座城市很大，很繁华，但我却觉得比从前更孤独了。`,
+  dialogue: "（也许，这就是我的宿命……）",
+  speaker: "内心独白",
+  backgroundDescription: "new city coffee shop, protagonist looking out window, melancholic atmosphere, time passing",
+  choices: [
+    { id: "1a_9c", text: "接受现实，继续生活", sentiment: "neutral" },
+    { id: "1a_9c2", text: "决定回去找她，哪怕只是见一面", sentiment: "bold" }
+  ],
+  isEnding: false
+};
+
+const SCENE_1A_9C_LAST_MESSAGE: SceneData = {
+  narrative: `
+我鼓起勇气，给她发了条消息："对不起，那天我逃跑了。我想为我的懦弱道歉。"
+
+发送。
+
+我盯着屏幕，心跳加速。她会回吗？她会骂我吗？还是直接拉黑我？
+
+三天后，她回了："没关系，我理解。你现在还好吗？"
+
+我愣住了。她不仅没有生气，还在关心我？
+
+"我……还好。你呢？"我回复。
+
+"我也还好。对了，我交男朋友了。他对我很好。"
+
+那一刻，我突然意识到，我错过了。彻底错过了。`,
+  dialogue: "（祝你幸福……）",
+  speaker: "内心独白",
+  backgroundDescription: "phone screen, last message, bittersweet farewell, melancholic",
+  choices: [
+    { id: "1a_9d", text: "祝福她，然后彻底放下", sentiment: "neutral" },
+    { id: "1a_9e", text: "告诉她，我其实一直喜欢她", sentiment: "bold" }
+  ],
+  isEnding: false
+};
+
+// ============================================================================
+// 第10层场景（1A分支）
+// ============================================================================
+
+const SCENE_1A_10A_FINAL_BLESSING: SceneData = {
+  narrative: `
+我选择了祝福她。
+
+"祝你幸福。"我回复。
+
+"谢谢。你也是。"她回。
+
+然后，我们再也没有联系过。
+
+那700块钱，成了我心里永远的刺。每次路过那家酒店，我都会想：如果那天我更勇敢一点，如果我更早说出真相……
+
+但人生没有如果。有些错过，就是一辈子。
+
+我学会了接受，学会了放下，学会了祝福。虽然心里还是会痛，但我知道，这是最好的结局。`,
+  dialogue: "（再见了，琳。祝你幸福。）",
+  speaker: "内心独白",
+  backgroundDescription: "sunset over city, protagonist looking at horizon, acceptance and peace, warm colors",
+  choices: [
+    { id: "1a_10a", text: "【结局】", sentiment: "neutral" }
+  ],
+  isEnding: false
+};
+
+const SCENE_1A_10B_FINAL_CONFESSION: SceneData = {
+  narrative: `
+我选择了告诉她真相。
+
+"其实，我一直喜欢你。"我发过去，"从那天晚上开始，我就一直在想你。我知道现在说这些已经太晚了，但我还是想告诉你。"
+
+发送。
+
+我盯着屏幕，心跳加速。她会回吗？她会骂我吗？还是直接拉黑我？
+
+十分钟后，她回了："谢谢你告诉我。我也曾经对你有过好感，但那是过去的事了。现在，我有男朋友了，我很幸福。我希望你也能找到属于你的幸福。"
+
+那一刻，我突然意识到，也许，这就是最好的结局。我们都没有错，只是错过了。`,
+  dialogue: "（谢谢你，琳。我会找到属于我的幸福的。）",
+  speaker: "内心独白",
+  backgroundDescription: "phone screen, final confession, bittersweet but peaceful, warm lighting",
+  choices: [
+    { id: "1a_10b", text: "【结局】", sentiment: "neutral" }
+  ],
+  isEnding: false
+};
+
+const SCENE_1A_10C_ACCEPTANCE: SceneData = {
+  narrative: `
+我选择了接受现实。
+
+时间是最好的良药，虽然伤口还在，但至少不再流血了。我学会了和孤独共处，学会了在人群中保持距离，学会了不再期待什么。
+
+那700块钱，成了我心里一个永远的秘密。一个只有我知道的秘密，一个永远不会对任何人提起的秘密。
+
+有时候，我会想，如果那天我敲门了，现在会是什么样子？但我知道，没有如果。有些选择，做错了就是做错了，错过了就是错过了。
+
+我继续生活，继续工作，继续在这个城市里游荡。只是，我再也不会去那家酒店，再也不会下载那种APP，再也不会试图用钱买来陪伴。
+
+也许，这就是成长。学会接受，学会放下，学会一个人走下去。`,
+  dialogue: "（就这样吧……）",
+  speaker: "内心独白",
+  backgroundDescription: "city street at night, protagonist walking alone, accepting loneliness, melancholic but peaceful",
+  choices: [
+    { id: "1a_10c", text: "【结局】", sentiment: "neutral" }
+  ],
+  isEnding: false
+};
+
+const SCENE_1A_10D_FINAL_SEARCH: SceneData = {
+  narrative: `
+我决定回去找她，哪怕只是见一面。
+
+我买了回程的票，回到了那座城市。一切都没变，又好像一切都变了。那栋楼还在，那家咖啡店还在，但那家酒店已经拆了，建成了新的商业中心。
+
+我开始在社交软件上疯狂地寻找，试图找到她的痕迹。我翻遍了所有可能的地方，问遍了所有可能认识她的人。
+
+终于，我找到了。她的朋友圈里，有她和男朋友的合照，有他们的旅行照片，有他们的日常。每一张照片里，她都笑得很开心。
+
+我盯着那些照片，看了很久很久。然后，我关掉了手机。
+
+也许，这就是最好的结局。她找到了她的幸福，而我，也应该去寻找我的了。
+
+那700块钱，就让它成为过去吧。`,
+  dialogue: "（再见了，琳。祝你幸福。）",
+  speaker: "内心独白",
+  backgroundDescription: "old city street, protagonist looking at phone, bittersweet realization, warm sunset",
+  choices: [
+    { id: "1a_10d", text: "【结局】", sentiment: "neutral" }
   ],
   isEnding: false
 };
@@ -1064,7 +1624,7 @@ const SCENE_1A_8B_FINAL_ESCAPE: SceneData = {
 
 // 1B分支的第4层场景
 const SCENE_1B_4A_DELETED_REGRET: SceneData = {
-  narrative: `【第四章B-1：删除后的后悔】
+  narrative: `
 我删除了她，但后悔很快就来了。
 
 我开始在微信里搜索她的账号，想要重新加她。但我发现，我已经不记得她的微信号了。
@@ -1087,7 +1647,7 @@ const SCENE_1B_4A_DELETED_REGRET: SceneData = {
 };
 
 const SCENE_1B_4B_CHAT_DEEPEN: SceneData = {
-  narrative: `【第四章B-2：聊天的深入】
+  narrative: `
 从那天起，我们每天晚上都会聊天。有时候是文字，有时候是语音，有时候是视频。手机屏幕的光在黑暗中发着光，像是两个孤独的灵魂在互相取暖。
 
 我了解到，她喜欢画画，喜欢看日落，喜欢在深夜听音乐。她告诉我，她画的第一幅画是给妈妈的生日礼物，画的是她们家的小花园，那时候她还在上小学。她最喜欢的日落是在海边看到的，那时候她刚失恋，一个人坐在沙滩上，看着太阳慢慢沉入海平面，眼泪和海水混在一起。
@@ -1105,7 +1665,7 @@ const SCENE_1B_4B_CHAT_DEEPEN: SceneData = {
 
 // 1B分支的第5层场景
 const SCENE_1B_5A_MEET_PLAN: SceneData = {
-  narrative: `【第五章B-1：计划见面】
+  narrative: `
 我们约好了见面。周六下午，咖啡店。
 
 我提前半小时就到了，选了个靠窗的位置，点了两杯拿铁。咖啡的香气在空气中弥漫，阳光透过百叶窗洒在桌子上，形成斑驳的光影。
@@ -1127,7 +1687,7 @@ const SCENE_1B_5A_MEET_PLAN: SceneData = {
 
 // 1B分支的第6层场景
 const SCENE_1B_6A_COFFEE_CONVERSATION: SceneData = {
-  narrative: `【第六章B-1：咖啡店的对话】
+  narrative: `
 我们聊了很久。从下午2点聊到傍晚6点，窗外的阳光从明亮变成金黄，再变成橘红，最后消失在城市的边缘。
 
 她告诉我，她叫琳，是个设计师。那段时间家里出了事，急需用钱，所以才接了那个单。但真到了那一刻，她也很害怕。
@@ -1149,7 +1709,7 @@ const SCENE_1B_6A_COFFEE_CONVERSATION: SceneData = {
 
 // 1B分支的第7层场景
 const SCENE_1B_7A_REGULAR_MEETINGS: SceneData = {
-  narrative: `【第七章B-1：定期见面】
+  narrative: `
 从那天起，我们开始定期见面。每周六下午，同一家咖啡店，同一个位置。
 
 我们聊工作，聊生活，聊那些不敢对别人说的话。我慢慢了解到，她喜欢画画，喜欢看日落，喜欢在深夜听音乐。
@@ -1173,7 +1733,7 @@ const SCENE_1B_7A_REGULAR_MEETINGS: SceneData = {
 
 // 1B分支的第8层场景
 const SCENE_1B_8A_RELATIONSHIP_DEFINE: SceneData = {
-  narrative: `【第八章B-1：定义关系】
+  narrative: `
 我握住了她的手。她的手很暖，很软，像是一团火，温暖了我冰冷的心。
 
 她看着我，眼神很复杂。有惊讶，有感动，还有一丝我读不懂的东西。
@@ -1190,7 +1750,125 @@ const SCENE_1B_8A_RELATIONSHIP_DEFINE: SceneData = {
   backgroundDescription: "coffee shop, two people holding hands, warm atmosphere, relationship defining moment",
   choices: [
     { id: "1b_8a", text: "\"好，我们试试看。\"", sentiment: "romantic" },
-    { id: "1b_8b", text: "\"我……还是有点害怕\"", sentiment: "shy" }
+    { id: "1b_8b", text: "\"我……还是有点害怕\"", sentiment: "shy" },
+    { id: "1b_8c", text: "\"我想先坦白一件事\"", sentiment: "honest" }
+  ],
+  isEnding: false
+};
+
+// ============================================================================
+// 第9层场景（1B分支）
+// ============================================================================
+
+const SCENE_1B_9A_FIRST_DATE: SceneData = {
+  narrative: `
+我们开始了第一次正式的约会。
+
+我提前半小时就到了，选了个靠窗的位置，点了她最喜欢的拿铁。咖啡的香气在空气中弥漫，阳光透过百叶窗洒在桌子上，形成斑驳的光影。
+
+她准时出现，穿着简单的白衬衫和牛仔裤，和我想象中的完全不一样。我想象中的她，应该是那种浓妆艳抹、穿着暴露的样子。但眼前的她，干净、简单，甚至有些朴素。
+
+"你好。"她在我对面坐下，把包放在旁边的椅子上，"没想到我们真的会在一起。"
+
+"我也没想到。"我说，声音有点紧张，"我以为你会直接拒绝我。"
+
+"为什么要拒绝？"她笑了，眼睛弯成月牙，"你又不是坏人，只是……有点胆小而已。"`,
+  dialogue: "\"其实，我只是想要有人陪。\"",
+  speaker: "我",
+  backgroundDescription: "coffee shop, first date, two people at table, warm and romantic atmosphere",
+  choices: [
+    { id: "1b_9a", text: "握住她的手，告诉她我的感受", sentiment: "romantic" },
+    { id: "1b_9b", text: "保持距离，慢慢来", sentiment: "shy" }
+  ],
+  isEnding: false
+};
+
+const SCENE_1B_9B_FEAR_CONFRONTATION: SceneData = {
+  narrative: `
+我选择了告诉她我的恐惧。
+
+"其实，我还是有点害怕。"我说，声音很轻，"我害怕我会伤害你，我害怕我会让你失望，我害怕……"
+
+"害怕什么？"她问，眼神很温柔。
+
+"害怕我会再次逃跑。"我说，声音更轻了，"就像那天晚上一样。"
+
+她看着我，眼神很复杂。有理解，有同情，还有一丝我读不懂的东西。
+
+"那我们就慢慢来。"她说，握住我的手，"不用着急，我们可以慢慢了解彼此。"`,
+  dialogue: "\"谢谢你理解我。\"",
+  speaker: "我",
+  backgroundDescription: "coffee shop, two people talking, understanding and support, warm atmosphere",
+  choices: [
+    { id: "1b_9c", text: "拥抱她，告诉她我会努力", sentiment: "romantic" },
+    { id: "1b_9d", text: "保持距离，只做朋友", sentiment: "neutral" }
+  ],
+  isEnding: false
+};
+
+const SCENE_1B_9C_FULL_CONFESSION: SceneData = {
+  narrative: `
+我选择了向她坦白一切。
+
+"其实，我想先坦白一件事。"我说，声音很轻，"那天晚上，我到了门口，但我逃跑了。我删除了你的联系方式，我试图忘记你，但我做不到。"
+
+她安静地听完，没有说话。空气很安静，安静到我能听到自己的心跳声。
+
+"我明白了。"她终于开口，声音很轻，"你跟踪我，是因为你想了解我，但又不敢直接接近我，对吗？"
+
+我点了点头，不敢看她。
+
+"其实，我也一直在观察你。"她说，"在公司里，在电梯里，在食堂里。我一直在想，你会不会主动和我说话。"`,
+  dialogue: "\"所以，我们都在等对方先开口？\"",
+  speaker: "我",
+  backgroundDescription: "coffee shop, full confession, two people understanding each other, emotional moment",
+  choices: [
+    { id: "1b_9e", text: "\"那现在，我们可以重新开始吗？\"", sentiment: "bold" },
+    { id: "1b_9f", text: "\"我……还是有点害怕\"", sentiment: "shy" }
+  ],
+  isEnding: false
+};
+
+// ============================================================================
+// 第10层场景（1B分支）
+// ============================================================================
+
+const SCENE_1B_10A_RELATIONSHIP_GROWTH: SceneData = {
+  narrative: `
+从那天起，我们开始正式交往。
+
+我们每周六下午都会见面，有时候是咖啡店，有时候是公园，有时候是电影院。我们聊工作，聊生活，聊那些不敢对别人说的话。
+
+我慢慢了解到，她叫琳，是个设计师。她喜欢画画，喜欢看日落，喜欢在深夜听音乐。她也开始了解我。我的工作，我的孤独，我的恐惧。
+
+"你知道吗？"有一天她对我说，声音很轻，但很坚定，"你其实不是懦弱，你只是太善良了。善良到不敢伤害任何人，包括自己。"
+
+那一刻，我突然意识到，也许，我真的可以改变。也许，我真的可以幸福。`,
+  dialogue: "\"谢谢你，琳。\"",
+  speaker: "我",
+  backgroundDescription: "park walk, two people in love, growing relationship, warm sunset colors",
+  choices: [
+    { id: "1b_10a", text: "【结局】", sentiment: "neutral" }
+  ],
+  isEnding: false
+};
+
+const SCENE_1B_10B_FRIENDSHIP_CHOICE: SceneData = {
+  narrative: `
+我选择了保持距离，只做朋友。
+
+"我明白了。"她说，声音很轻，"也许，朋友的关系更适合我们。"
+
+我们继续见面，继续聊天，但再也没有越过那条线。我们成了最好的朋友，无话不谈，互相支持。
+
+有时候，我会想，如果那天我更勇敢一点，如果我更早说出真相，现在会是什么样子？
+
+但我知道，有些关系，不是爱情，却同样珍贵。`,
+  dialogue: "\"谢谢你，琳。你是我最好的朋友。\"",
+  speaker: "我",
+  backgroundDescription: "coffee shop, two friends, warm friendship, peaceful atmosphere",
+  choices: [
+    { id: "1b_10b", text: "【结局】", sentiment: "neutral" }
   ],
   isEnding: false
 };
@@ -1201,7 +1879,7 @@ const SCENE_1B_8A_RELATIONSHIP_DEFINE: SceneData = {
 
 // 1C分支的第4层场景
 const SCENE_1C_4A_GUILT_OBSERVE: SceneData = {
-  narrative: `【第四章C-1：内疚的观察】
+  narrative: `
 我选择了继续观察。我开始每天查看她的朋友圈，开始留意她的动态，开始试图从这些碎片中拼凑出她的生活。
 
 我发现她喜欢画画，喜欢看日落，喜欢在深夜听音乐。我发现她工作很努力，经常加班到很晚。我发现她似乎很孤独，朋友圈里很少有其他人的照片。
@@ -1224,7 +1902,7 @@ const SCENE_1C_4A_GUILT_OBSERVE: SceneData = {
 };
 
 const SCENE_1C_4B_FIRST_MESSAGE: SceneData = {
-  narrative: `【第四章C-2：第一条消息】
+  narrative: `
 我鼓起勇气，给她发了条消息："你好，我是那天晚上的……我想为那天的事道歉。"
 
 发送。
@@ -1252,7 +1930,7 @@ const SCENE_1C_4B_FIRST_MESSAGE: SceneData = {
 
 // 1C分支的第5层场景
 const SCENE_1C_5A_FIRST_MEETING: SceneData = {
-  narrative: `【第五章C-1：第一次见面】
+  narrative: `
 我们约在公司楼下的咖啡店。我提前到了，选了个安静的角落。咖啡店的音乐很轻，是那种让人放松的爵士乐。
 
 我点了两杯拿铁，然后开始等待。时间过得很慢，每一秒都像是在考验我的耐心。
@@ -1276,7 +1954,7 @@ const SCENE_1C_5A_FIRST_MEETING: SceneData = {
 
 // 1C分支的第6层场景
 const SCENE_1C_6A_DEEP_TALK: SceneData = {
-  narrative: `【第六章C-1：深入对话】
+  narrative: `
 我们继续聊下去。从下午2点聊到傍晚6点，窗外的阳光从明亮变成金黄，再变成橘红，最后消失在城市的边缘。
 
 她告诉我，她喜欢画画，喜欢看日落，喜欢在深夜听音乐。她告诉我，她画的第一幅画是给妈妈的生日礼物，那时候她还在上小学，画得很丑，但妈妈却把它裱起来，挂在客厅里。她最喜欢的日落是在海边看到的，那时候她刚失恋，一个人坐在沙滩上，看着太阳慢慢沉入海平面，眼泪和海水混在一起。
@@ -1296,7 +1974,7 @@ const SCENE_1C_6A_DEEP_TALK: SceneData = {
 
 // 1C分支的第7层场景
 const SCENE_1C_7A_RELATIONSHIP_GROW: SceneData = {
-  narrative: `【第七章C-1：关系的发展】
+  narrative: `
 从那天起，我们开始经常见面。有时候是咖啡店，有时候是公司食堂，有时候是下班后的散步。
 
 公园里的路灯已经亮了，昏黄的光洒在我们身上，把影子拉得很长。我们并排走着，中间隔着一点距离，但那种距离让人感到安全，也让人感到温暖。
@@ -1318,7 +1996,7 @@ const SCENE_1C_7A_RELATIONSHIP_GROW: SceneData = {
 
 // 1C分支的第8层场景
 const SCENE_1C_8A_FINAL_CHOICE: SceneData = {
-  narrative: `【第八章C-1：最终选择】
+  narrative: `八章C-1：最终选择】
 我握住了她的手。她的手很暖，很软，像是一团火，温暖了我冰冷的心。
 
 她看着我，眼神很复杂。有惊讶，有感动，还有一丝我读不懂的东西。
@@ -1335,7 +2013,123 @@ const SCENE_1C_8A_FINAL_CHOICE: SceneData = {
   backgroundDescription: "park bench at night, two people holding hands, warm atmosphere, relationship defining moment",
   choices: [
     { id: "1c_8a", text: "\"好，我们试试看。\"", sentiment: "romantic" },
-    { id: "1c_8b", text: "\"我……还是有点害怕\"", sentiment: "shy" }
+    { id: "1c_8b", text: "\"我……还是有点害怕\"", sentiment: "shy" },
+    { id: "1c_8c", text: "\"我想先为那700块钱道歉\"", sentiment: "honest" }
+  ],
+  isEnding: false
+};
+
+// ============================================================================
+// 第9层场景（1C分支）
+// ============================================================================
+
+const SCENE_1C_9A_NEW_BEGINNING: SceneData = {
+  narrative: `九章C-1：新的开始】
+我们开始了新的关系。
+
+从那天起，我们开始经常见面。有时候是咖啡店，有时候是公司食堂，有时候是下班后的散步。
+
+公园里的路灯已经亮了，昏黄的光洒在我们身上，把影子拉得很长。我们并排走着，中间隔着一点距离，但那种距离让人感到安全，也让人感到温暖。
+
+我慢慢了解到，她叫琳，是个设计师。她喜欢画画，喜欢看日落，喜欢在深夜听音乐。她也开始了解我。我的工作，我的孤独，我的恐惧。
+
+"你知道吗？"有一天她对我说，声音很轻，但很坚定，"你其实不是懦弱，你只是太善良了。善良到不敢伤害任何人，包括自己。"`,
+  dialogue: "\"也许，我们可以不只是朋友？\"",
+  speaker: "琳",
+  backgroundDescription: "evening walk in park, two people in new relationship, warm sunset colors, peaceful",
+  choices: [
+    { id: "1c_9a", text: "\"我想……不只是朋友\"", sentiment: "romantic" },
+    { id: "1c_9b", text: "\"好，朋友也很好\"", sentiment: "neutral" }
+  ],
+  isEnding: false
+};
+
+const SCENE_1C_9B_FEAR_AGAIN: SceneData = {
+  narrative: `九章C-2：再次的恐惧】
+我选择了告诉她我的恐惧。
+
+"其实，我还是有点害怕。"我说，声音很轻，"我害怕我会伤害你，我害怕我会让你失望，我害怕……"
+
+"害怕什么？"她问，眼神很温柔。
+
+"害怕我会再次逃跑。"我说，声音更轻了，"就像那天晚上一样。"
+
+她看着我，眼神很复杂。有理解，有同情，还有一丝我读不懂的东西。
+
+"那我们就慢慢来。"她说，握住我的手，"不用着急，我们可以慢慢了解彼此。"`,
+  dialogue: "\"谢谢你理解我。\"",
+  speaker: "我",
+  backgroundDescription: "coffee shop, two people talking, understanding and support, warm atmosphere",
+  choices: [
+    { id: "1c_9c", text: "拥抱她，告诉她我会努力", sentiment: "romantic" },
+    { id: "1c_9d", text: "保持距离，只做朋友", sentiment: "neutral" }
+  ],
+  isEnding: false
+};
+
+const SCENE_1C_9C_700_APOLOGY: SceneData = {
+  narrative: `九章C-3：700元的道歉】
+我选择了向她坦白那700块钱的事。
+
+"其实，我想先为那700块钱道歉。"我说，声音很轻，"那天晚上，我到了门口，但我逃跑了。我删除了你的联系方式，我试图忘记你，但我做不到。"
+
+她安静地听完，没有说话。空气很安静，安静到我能听到自己的心跳声。
+
+"我明白了。"她终于开口，声音很轻，"你跟踪我，是因为你想了解我，但又不敢直接接近我，对吗？"
+
+我点了点头，不敢看她。
+
+"其实，我也一直在观察你。"她说，"在公司里，在电梯里，在食堂里。我一直在想，你会不会主动和我说话。"`,
+  dialogue: "\"所以，我们都在等对方先开口？\"",
+  speaker: "我",
+  backgroundDescription: "coffee shop, full confession about 700 yuan, two people understanding each other, emotional",
+  choices: [
+    { id: "1c_9e", text: "\"那现在，我们可以重新开始吗？\"", sentiment: "bold" },
+    { id: "1c_9f", text: "\"我……还是有点害怕\"", sentiment: "shy" }
+  ],
+  isEnding: false
+};
+
+// ============================================================================
+// 第10层场景（1C分支）
+// ============================================================================
+
+const SCENE_1C_10A_RELATIONSHIP_DEEPEN: SceneData = {
+  narrative: `十章C-1：关系的深化】
+从那天起，我们开始正式交往。
+
+我们每周六下午都会见面，有时候是咖啡店，有时候是公园，有时候是电影院。我们聊工作，聊生活，聊那些不敢对别人说的话。
+
+我慢慢了解到，她叫琳，是个设计师。她喜欢画画，喜欢看日落，喜欢在深夜听音乐。她也开始了解我。我的工作，我的孤独，我的恐惧。
+
+"你知道吗？"有一天她对我说，声音很轻，但很坚定，"你其实不是懦弱，你只是太善良了。善良到不敢伤害任何人，包括自己。"
+
+那一刻，我突然意识到，也许，我真的可以改变。也许，我真的可以幸福。`,
+  dialogue: "\"谢谢你，琳。\"",
+  speaker: "我",
+  backgroundDescription: "park walk, two people in love, deepening relationship, warm sunset colors",
+  choices: [
+    { id: "1c_10a", text: "【结局】", sentiment: "neutral" }
+  ],
+  isEnding: false
+};
+
+const SCENE_1C_10B_FRIENDSHIP_PATH: SceneData = {
+  narrative: `十章C-2：友谊之路】
+我选择了保持距离，只做朋友。
+
+"我明白了。"她说，声音很轻，"也许，朋友的关系更适合我们。"
+
+我们继续见面，继续聊天，但再也没有越过那条线。我们成了最好的朋友，无话不谈，互相支持。
+
+有时候，我会想，如果那天我更勇敢一点，如果我更早说出真相，现在会是什么样子？
+
+但我知道，有些关系，不是爱情，却同样珍贵。`,
+  dialogue: "\"谢谢你，琳。你是我最好的朋友。\"",
+  speaker: "我",
+  backgroundDescription: "coffee shop, two friends, warm friendship, peaceful atmosphere",
+  choices: [
+    { id: "1c_10b", text: "【结局】", sentiment: "neutral" }
   ],
   isEnding: false
 };
@@ -1345,7 +2139,7 @@ const SCENE_1C_8A_FINAL_CHOICE: SceneData = {
 // ============================================================================
 
 const ENDING_TRUE_LOVE: SceneData = {
-  narrative: `【真爱结局：七百元的答案】
+  narrative: `
 公园的长椅上，我把那一夜所有的恐惧、羞耻、自我怀疑全盘托出。每一个字都像是从心底挖出来的，带着血，带着痛。
 
 "我逃跑不是因为嫌弃你，是因为我嫌弃我自己。我怕进了那扇门，就再也回不去了。"
@@ -1372,7 +2166,7 @@ const ENDING_TRUE_LOVE: SceneData = {
 };
 
 const ENDING_FRIEND: SceneData = {
-  narrative: `【挚友结局：最好的距离】
+  narrative: `
 "我明白了。"琳点点头，声音很轻，"那天的事，我们都当它没发生过吧。"
 
 "真的可以吗？"我问，声音里带着一丝不确定。
@@ -1393,7 +2187,7 @@ const ENDING_FRIEND: SceneData = {
 };
 
 const ENDING_REGRET: SceneData = {
-  narrative: `【遗憾结局：错过】
+  narrative: `
 "对不起，我不能接受这样的开始。"琳站起身，眼神里是深深的失望。那种失望，比愤怒更让人难受。
 
 "我本来以为……算了，不重要了。"她的声音很轻，但每个字都像是刀子，割在我心上。
@@ -1416,7 +2210,7 @@ const ENDING_REGRET: SceneData = {
 };
 
 const ENDING_REDEMPTION: SceneData = {
-  narrative: `【救赎结局：重新开始】
+  narrative: `
 "我不能说我完全原谅你。"琳看着我，眼神很认真，"但我理解你当时的感受。"
 
 "我……"我想说什么，但话到嘴边又咽了回去。
@@ -1443,7 +2237,7 @@ const ENDING_REDEMPTION: SceneData = {
 };
 
 const ENDING_STRANGER: SceneData = {
-  narrative: `【陌路结局：平行线】
+  narrative: `
 我选择了沉默。她也没有再问。
 
 从那天起，我们偶尔还会在电梯里遇到，在食堂擦肩而过。我们会点头，会说"你好"，但仅此而已。就像两条平行线，永远不会有交集。
@@ -1478,8 +2272,133 @@ export class LLMService {
     branch: 'main',
     hasConfessed: false,
     specialEvents: [],
-    relationshipType: 'stranger'
+    relationshipType: 'stranger',
+    intimacy: 0
   };
+
+  /**
+   * 计算亲密度 - 模拟人类情感的复杂算法
+   * 亲密度 = 基础好感 + 勇气加成 + 诚实加成 + 关系类型加成 + 特殊事件加成
+   * 范围：0-100
+   */
+  private calculateIntimacy(): number {
+    const { affection, courage, honesty, hasConfessed, relationshipType, specialEvents, depth } = this.state;
+    
+    // ========== 人类情感模拟算法 ==========
+    // 亲密度不是简单的数值相加，而是基于情感共鸣、信任建立、时间积累的综合体现
+    
+    // 1. 基础好感度转换 (好感度范围 -10到10，转换为0-35分)
+    // 好感度是亲密度的基础，但非线性：负好感会大幅降低，正好感需要配合其他因素
+    let baseScore = 0;
+    if (affection >= 0) {
+      // 正好感：指数增长，但需要配合其他因素
+      baseScore = Math.pow(affection / 10, 0.7) * 35; // 0->0, 5->20, 10->35
+    } else {
+      // 负好感：线性惩罚，但不会完全归零（因为可能有其他因素）
+      baseScore = Math.max(0, (affection + 10) * 1.5); // -10->0, -5->7.5, 0->15
+    }
+    
+    // 2. 勇气与诚实的协同效应 (0-30分)
+    // 单独的勇气或诚实效果有限，但两者结合会产生协同效应
+    const courageBase = courage * 1.2; // 0->0, 10->12
+    const honestyBase = honesty * 1.3; // 0->0, 10->13
+    // 协同效应：当两者都高时，会产生额外的加成
+    const synergy = (courage >= 5 && honesty >= 5) 
+      ? Math.min(courage, honesty) * 0.5  // 两者都高时，取较小值的一半作为加成
+      : 0;
+    const courageHonestyScore = Math.min(30, courageBase + honestyBase + synergy);
+    
+    // 3. 坦白的深度影响 (0-15分)
+    // 坦白是建立深度信任的关键，但需要勇气和诚实的支撑
+    let confessionBonus = 0;
+    if (hasConfessed) {
+      // 坦白的价值取决于勇气和诚实度
+      const confessionValue = (courage + honesty) / 2; // 平均勇气和诚实
+      confessionBonus = Math.min(15, confessionValue * 1.5); // 最高15分
+    }
+    
+    // 4. 关系类型的情感权重 (0-20分)
+    // 不同关系类型对亲密度的贡献不同，且非线性
+    let relationshipBonus = 0;
+    switch (relationshipType) {
+      case 'romantic':
+        // 浪漫关系：高权重，但需要好感度支撑
+        relationshipBonus = affection >= 3 ? 20 : (affection >= 0 ? 15 : 10);
+        break;
+      case 'friend':
+        // 朋友关系：稳定但中等权重
+        relationshipBonus = 12;
+        break;
+      case 'complicated':
+        // 复杂关系：低权重，可能还有波动
+        relationshipBonus = 6;
+        break;
+      case 'stranger':
+        relationshipBonus = 0;
+        break;
+    }
+    
+    // 5. 特殊事件的累积效应 (0-12分)
+    // 正面事件会累积，但边际效应递减
+    const positiveEvents = [
+      'normal_meet', 'coffee_date', 'coffee_talk', '1a_first_meet',
+      '1b_apology', '1c_first_message', '1a_building_trust',
+      '1b_regular_meet', '1c_deep_conversation', '1a_confront',
+      '1b_deep_chat', '1c_meeting'
+    ];
+    const eventCount = specialEvents.filter(e => positiveEvents.includes(e)).length;
+    // 边际效应递减：第一个事件+3分，第二个+2.5分，第三个+2分...
+    let eventBonus = 0;
+    for (let i = 0; i < Math.min(eventCount, 5); i++) {
+      eventBonus += 3 - i * 0.5;
+    }
+    eventBonus = Math.min(12, eventBonus);
+    
+    // 6. 负面事件的惩罚 (最多-15分)
+    // 负面事件会显著降低亲密度，但不会完全抵消正面因素
+    const negativeEvents = ['1a_stalking', '1b_1', '1a_escape'];
+    const negativeCount = specialEvents.filter(e => negativeEvents.includes(e)).length;
+    const eventPenalty = Math.min(15, negativeCount * 4);
+    
+    // 7. 时间/深度的自然增长 (0-10分)
+    // 随着剧情深入，即使没有特别的选择，亲密度也会自然增长
+    // 但增长是递减的：前5层增长快，后5层增长慢
+    let depthBonus = 0;
+    if (depth <= 5) {
+      depthBonus = depth * 1.2; // 前5层：每层+1.2分
+    } else {
+      depthBonus = 6 + (depth - 5) * 0.8; // 后5层：每层+0.8分
+    }
+    depthBonus = Math.min(10, depthBonus);
+    
+    // 8. 综合计算
+    let totalIntimacy = baseScore + courageHonestyScore + confessionBonus + 
+                        relationshipBonus + eventBonus - eventPenalty + depthBonus;
+    
+    // 9. 情感平衡调整
+    // 如果好感度极低，即使其他因素好，亲密度也会受限
+    if (affection < -7) {
+      totalIntimacy *= 0.5; // 极低好感：减半
+    } else if (affection < -3) {
+      totalIntimacy *= 0.75; // 低好感：减少25%
+    }
+    
+    // 如果只有好感度高，但缺乏勇气和诚实，亲密度也会受限
+    if (affection >= 5 && (courage < 3 || honesty < 3)) {
+      totalIntimacy *= 0.85; // 好感度高但缺乏行动：减少15%
+    }
+    
+    // 10. 关系类型的最终调整
+    // 如果关系类型是romantic但好感度不够，会降低
+    if (relationshipType === 'romantic' && affection < 2) {
+      totalIntimacy *= 0.9; // 浪漫关系但好感度不足：减少10%
+    }
+    
+    // 11. 最终范围限制和四舍五入
+    totalIntimacy = Math.max(0, Math.min(100, Math.round(totalIntimacy)));
+    
+    return totalIntimacy;
+  }
 
   async startNewGame(): Promise<SceneData> {
     this.state = {
@@ -1492,7 +2411,8 @@ export class LLMService {
       branch: 'main',
       hasConfessed: false,
       specialEvents: [],
-      relationshipType: 'stranger'
+      relationshipType: 'stranger',
+      intimacy: 0
     };
     return SCENE_0_PROLOGUE;
   }
@@ -1806,6 +2726,51 @@ export class LLMService {
       this.state.hasConfessed = true;
     }
 
+    // SCENE_2_REUNION和SCENE_3_LUNCH的后续选择状态更新
+    if (choiceId === "2_1a") {
+      this.state.courage += 2;
+      this.state.honesty += 2;
+      this.state.affection += 1;
+    } else if (choiceId === "2_1b") {
+      this.state.courage -= 1;
+    } else if (choiceId === "2_2a") {
+      this.state.courage += 2;
+      this.state.affection += 3;
+      this.state.specialEvents.push('normal_meet');
+    } else if (choiceId === "2_2b") {
+      this.state.courage -= 1;
+      this.state.affection -= 1;
+    } else if (choiceId === "2_3a") {
+      this.state.courage += 3;
+      this.state.affection += 2;
+      this.state.specialEvents.push('normal_meet');
+    } else if (choiceId === "2_3b") {
+      this.state.courage -= 2;
+      this.state.affection -= 2;
+    } else if (choiceId === "3_1a") {
+      this.state.affection += 3;
+      this.state.courage += 2;
+      this.state.relationshipType = 'romantic';
+    } else if (choiceId === "3_1b") {
+      this.state.affection += 1;
+      this.state.courage -= 1;
+    } else if (choiceId === "3_2a") {
+      this.state.courage += 2;
+      this.state.affection += 1;
+    } else if (choiceId === "3_2b") {
+      this.state.courage -= 2;
+      this.state.affection -= 2;
+    } else if (choiceId === "3_3a") {
+      this.state.affection += 3;
+      this.state.courage += 2;
+      this.state.relationshipType = 'romantic';
+    } else if (choiceId === "3_3b") {
+      this.state.affection += 1;
+      this.state.relationshipType = 'friend';
+    }
+
+    // 更新亲密度（每次状态更新后重新计算）
+    this.state.intimacy = this.calculateIntimacy();
   }
 
   // 基于路径的树状分支匹配系统
@@ -1849,8 +2814,8 @@ export class LLMService {
       return this.match1CBranch(path, depth);
     }
 
-    // 默认：如果路径不匹配，返回结局
-    if (depth >= 8) {
+    // 默认：如果路径不匹配，返回结局（扩展到10层）
+    if (depth > 10) {
       return this.getEnding();
     }
 
@@ -1904,41 +2869,67 @@ export class LLMService {
       if (lastChoice === '1a_5a') return SCENE_1A_6A_COFFEE_DEEP;
       if (lastChoice === '1a_5b') return SCENE_1A_6B_ELEVATOR_CONTINUE;
       if (lastChoice === '1a_5c') return SCENE_1A_6B_ELEVATOR_CONTINUE;
-      if (lastChoice === '1a_5d') return SCENE_1A_STALKING;
-      if (lastChoice === '1a_6a') return SCENE_1A_BUILDING_TRUST;
-      if (lastChoice === '1a_6b') return SCENE_1A_BUILDING_TRUST;
-      if (lastChoice === '1a_6c') return SCENE_1A_7A_RELATIONSHIP_GROW;
-      if (lastChoice === '1a_6d') return SCENE_1A_7B_STALKING_DISCOVERED;
-      if (lastChoice === '1a_8a') return SCENE_1A_6B_ELEVATOR_CONTINUE;
-      if (lastChoice === '1a_8b') return SCENE_1A_STALKING;
-      if (lastChoice === '1a_9a') return SCENE_1A_8A_CONFESSION;
-      if (lastChoice === '1a_9b') return SCENE_1A_8B_FINAL_ESCAPE;
+      if (lastChoice === '1a_5d') return SCENE_1A_7B_STALKING_DISCOVERED;
+      if (lastChoice === '1a_6') return SCENE_1A_FIRST_MEET; // 从CONFRONT来的
     }
 
     // 第7层
     if (depth === 7) {
-      if (lastChoice === '1a_6a' || lastChoice === '1a_6b') return SCENE_1A_7A_RELATIONSHIP_GROW;
-      if (lastChoice === '1a_6c' || lastChoice === '1a_6d') return SCENE_1A_7A_RELATIONSHIP_GROW;
-      if (lastChoice === '1a_7a') return SCENE_1A_8A_CONFESSION;
-      if (lastChoice === '1a_7b') return SCENE_1A_8A_CONFESSION;
+      // 从SCENE_1A_FIRST_MEET或SCENE_1A_6A_COFFEE_DEEP来的选择
+      if (lastChoice === '1a_6a') return SCENE_1A_BUILDING_TRUST;
+      if (lastChoice === '1a_6b') return SCENE_1A_BUILDING_TRUST;
+      // 从SCENE_1A_6B_ELEVATOR_CONTINUE来的选择
+      if (lastChoice === '1a_6c') return SCENE_1A_7A_RELATIONSHIP_GROW;
+      if (lastChoice === '1a_6d') return SCENE_1A_7B_STALKING_DISCOVERED;
+      // 从SCENE_1A_BUILDING_TRUST来的选择
+      if (lastChoice === '1a_7a') return SCENE_1A_7A_RELATIONSHIP_GROW;
+      if (lastChoice === '1a_7b') return SCENE_1A_7A_RELATIONSHIP_GROW;
+      // 从SCENE_1A_7B_STALKING_DISCOVERED来的选择
       if (lastChoice === '1a_7c') return SCENE_1A_8A_CONFESSION;
       if (lastChoice === '1a_7d') return SCENE_1A_8B_FINAL_ESCAPE;
+      // 从SCENE_1A_ELEVATOR_TALK来的选择
+      if (lastChoice === '1a_8a') return SCENE_1A_6B_ELEVATOR_CONTINUE;
+      if (lastChoice === '1a_8b') return SCENE_1A_STALKING;
+      // 从SCENE_1A_STALKING来的选择
+      if (lastChoice === '1a_9a') return SCENE_1A_8A_CONFESSION;
+      if (lastChoice === '1a_9b') return SCENE_1A_8B_FINAL_ESCAPE;
     }
 
     // 第8层 - 接近结局
     if (depth === 8) {
+      // 从SCENE_1A_7A_RELATIONSHIP_GROW来的选择
+      if (lastChoice === '1a_7a') return SCENE_1A_8A_CONFESSION;
+      if (lastChoice === '1a_7b') return SCENE_1A_8A_CONFESSION;
+      // 从SCENE_1A_8A_CONFESSION来的选择
       if (lastChoice === '1a_8a') {
-        // 根据关系类型决定结局
-        if (this.state.relationshipType === 'romantic') return ENDING_TRUE_LOVE;
-        if (this.state.relationshipType === 'friend') return ENDING_FRIEND;
-        return ENDING_REDEMPTION;
+        // 继续到第9层，不直接结局
+        return SCENE_1A_9A_REUNION_ATTEMPT;
       }
-      if (lastChoice === '1a_8b') return ENDING_REGRET;
-      if (lastChoice === '1a_8c') return ENDING_STRANGER;
+      if (lastChoice === '1a_8b') return SCENE_1A_9A_REUNION_ATTEMPT;
+      // 从SCENE_1A_8B_FINAL_ESCAPE来的选择
+      if (lastChoice === '1a_8c') return SCENE_1A_9B_FINAL_GOODBYE;
+      if (lastChoice === '1a_8d') return SCENE_1A_9C_LAST_MESSAGE;
     }
 
-    // 第9层 - 最终结局
-    if (depth >= 9) {
+    // 第9层 - 继续分支
+    if (depth === 9) {
+      if (lastChoice === '1a_9a') return SCENE_1A_10B_FINAL_CONFESSION;
+      if (lastChoice === '1a_9b') return SCENE_1A_9B_FINAL_GOODBYE;
+      if (lastChoice === '1a_9c') return SCENE_1A_10C_ACCEPTANCE; // 进入第10层
+      if (lastChoice === '1a_9c2') return SCENE_1A_10D_FINAL_SEARCH; // 进入第10层
+      if (lastChoice === '1a_9d') return SCENE_1A_10A_FINAL_BLESSING;
+      if (lastChoice === '1a_9e') return SCENE_1A_10B_FINAL_CONFESSION;
+    }
+
+    // 第10层 - 最终结局
+    if (depth === 10) {
+      if (lastChoice === '1a_10a' || lastChoice === '1a_10b' || lastChoice === '1a_10c' || lastChoice === '1a_10d') {
+        return this.getEnding();
+      }
+    }
+
+    // 如果深度超过10层，直接返回结局
+    if (depth > 10) {
       return this.getEnding();
     }
 
@@ -1979,6 +2970,14 @@ export class LLMService {
       if (pathStr.includes('1b_2ad')) return SCENE_2_REUNION;
       if (pathStr.includes('1b_3c')) return SCENE_1B_REGULAR_MEET;
       if (pathStr.includes('1b_3d')) return SCENE_2_REUNION;
+      // SCENE_2_REUNION的选择（2_1, 2_2, 2_3）
+      if (pathStr.includes('2_1')) return SCENE_2_1_AWKWARD;
+      if (pathStr.includes('2_2')) return SCENE_2_2_RECOGNITION;
+      if (pathStr.includes('2_3')) return SCENE_2_3_ESCAPE;
+      // SCENE_3_LUNCH的选择（3_1, 3_2, 3_3）
+      if (pathStr.includes('3_1')) return SCENE_3_1_LUNCH_TALK;
+      if (pathStr.includes('3_2')) return SCENE_3_2_REJECTION;
+      if (pathStr.includes('3_3')) return SCENE_3_3_APOLOGY;
     }
 
     // 第5层
@@ -1989,12 +2988,66 @@ export class LLMService {
       if (pathStr.includes('1b_4d')) return SCENE_1B_4B_CHAT_DEEPEN;
       if (pathStr.includes('1b_5a')) return SCENE_1B_6A_COFFEE_CONVERSATION;
       if (pathStr.includes('1b_5b')) return SCENE_1B_6A_COFFEE_CONVERSATION;
+      // SCENE_2_1_AWKWARD的选择（2_1a, 2_1b）
+      if (pathStr.includes('2_1a')) return SCENE_2_1A_CONFESSION;
+      if (pathStr.includes('2_1b')) return SCENE_2_1B_CONTINUE_ESCAPE;
+      // SCENE_2_2_RECOGNITION的选择（2_2a, 2_2b）
+      if (pathStr.includes('2_2a')) return SCENE_2_2A_COFFEE_INVITATION;
+      if (pathStr.includes('2_2b')) return SCENE_2_2B_HESITATE;
+      // SCENE_2_3_ESCAPE的选择（2_3a, 2_3b）
+      if (pathStr.includes('2_3a')) return SCENE_2_3A_TURN_BACK;
+      if (pathStr.includes('2_3b')) return SCENE_2_3B_FINAL_ESCAPE;
+      // SCENE_3_1_LUNCH_TALK的选择（3_1a, 3_1b）
+      if (pathStr.includes('3_1a')) return SCENE_3_1A_AGREE;
+      if (pathStr.includes('3_1b')) return SCENE_3_1B_HESITATE;
+      // SCENE_3_2_REJECTION的选择（3_2a, 3_2b）
+      if (pathStr.includes('3_2a')) return SCENE_3_2A_REGRET;
+      if (pathStr.includes('3_2b')) return SCENE_3_2B_FINAL_ESCAPE;
+      // SCENE_3_3_APOLOGY的选择（3_3a, 3_3b）
+      if (pathStr.includes('3_3a')) return SCENE_3_3A_NEW_START;
+      if (pathStr.includes('3_3b')) return SCENE_3_3B_FEAR;
     }
 
     // 第6层
     if (depth === 6) {
       if (pathStr.includes('1b_6a')) return SCENE_1B_7A_REGULAR_MEETINGS;
       if (pathStr.includes('1b_6b')) return SCENE_1B_7A_REGULAR_MEETINGS;
+      // SCENE_2_1A_CONFESSION的选择（2_1aa, 2_1ab）
+      if (pathStr.includes('2_1aa')) return SCENE_1B_9A_FIRST_DATE; // 复用已有场景
+      if (pathStr.includes('2_1ab')) return SCENE_1B_9B_FEAR_CONFRONTATION; // 复用已有场景
+      // SCENE_2_1B_CONTINUE_ESCAPE的选择（2_1ba, 2_1bb）
+      if (pathStr.includes('2_1ba')) return SCENE_2_3A_TURN_BACK; // 复用已有场景
+      if (pathStr.includes('2_1bb')) return SCENE_2_3B_FINAL_ESCAPE; // 复用已有场景
+      // SCENE_2_2A_COFFEE_INVITATION的选择（2_2aa, 2_2ab）
+      if (pathStr.includes('2_2aa')) return SCENE_1B_9A_FIRST_DATE; // 复用已有场景
+      if (pathStr.includes('2_2ab')) return SCENE_1B_9B_FEAR_CONFRONTATION; // 复用已有场景
+      // SCENE_2_2B_HESITATE的选择（2_2ba, 2_2bb）
+      if (pathStr.includes('2_2ba')) return SCENE_1B_9C_FULL_CONFESSION; // 复用已有场景
+      if (pathStr.includes('2_2bb')) return SCENE_2_3B_FINAL_ESCAPE; // 复用已有场景
+      // SCENE_2_3A_TURN_BACK的选择（2_3aa, 2_3ab）
+      if (pathStr.includes('2_3aa')) return SCENE_1B_9A_FIRST_DATE; // 复用已有场景
+      if (pathStr.includes('2_3ab')) return SCENE_2_2B_HESITATE; // 复用已有场景
+      // SCENE_2_3B_FINAL_ESCAPE的选择（2_3ba, 2_3bb）
+      if (pathStr.includes('2_3ba')) return SCENE_1A_10C_ACCEPTANCE; // 复用已有场景
+      if (pathStr.includes('2_3bb')) return SCENE_1A_10D_FINAL_SEARCH; // 复用已有场景
+      // SCENE_3_1A_AGREE的选择（3_1aa, 3_1ab）
+      if (pathStr.includes('3_1aa')) return SCENE_1B_9A_FIRST_DATE; // 复用已有场景
+      if (pathStr.includes('3_1ab')) return SCENE_1B_9B_FEAR_CONFRONTATION; // 复用已有场景
+      // SCENE_3_1B_HESITATE的选择（3_1ba, 3_1bb）
+      if (pathStr.includes('3_1ba')) return SCENE_1B_9C_FULL_CONFESSION; // 复用已有场景
+      if (pathStr.includes('3_1bb')) return SCENE_2_3B_FINAL_ESCAPE; // 复用已有场景
+      // SCENE_3_2A_REGRET的选择（3_2aa, 3_2ab）
+      if (pathStr.includes('3_2aa')) return SCENE_1B_9C_FULL_CONFESSION; // 复用已有场景
+      if (pathStr.includes('3_2ab')) return SCENE_2_3B_FINAL_ESCAPE; // 复用已有场景
+      // SCENE_3_2B_FINAL_ESCAPE的选择（3_2ba, 3_2bb）
+      if (pathStr.includes('3_2ba')) return SCENE_1A_10C_ACCEPTANCE; // 复用已有场景
+      if (pathStr.includes('3_2bb')) return SCENE_1A_10D_FINAL_SEARCH; // 复用已有场景
+      // SCENE_3_3A_NEW_START的选择（3_3aa, 3_3ab）
+      if (pathStr.includes('3_3aa')) return SCENE_1B_9A_FIRST_DATE; // 复用已有场景
+      if (pathStr.includes('3_3ab')) return SCENE_1B_9B_FEAR_CONFRONTATION; // 复用已有场景
+      // SCENE_3_3B_FEAR的选择（3_3ba, 3_3bb）
+      if (pathStr.includes('3_3ba')) return SCENE_1B_9C_FULL_CONFESSION; // 复用已有场景
+      if (pathStr.includes('3_3bb')) return SCENE_1B_10B_FRIENDSHIP_CHOICE; // 复用已有场景
     }
 
     // 第7层
@@ -2003,17 +3056,32 @@ export class LLMService {
       if (pathStr.includes('1b_7b')) return SCENE_1B_8A_RELATIONSHIP_DEFINE;
     }
 
-    // 第8层 - 接近结局
+    // 第8层 - 继续分支
     if (depth === 8) {
-      if (pathStr.includes('1b_8a')) {
-        if (this.state.relationshipType === 'romantic') return ENDING_TRUE_LOVE;
-        return ENDING_REDEMPTION;
-      }
-      if (pathStr.includes('1b_8b')) return ENDING_FRIEND;
+      if (pathStr.includes('1b_8a')) return SCENE_1B_9A_FIRST_DATE;
+      if (pathStr.includes('1b_8b')) return SCENE_1B_9B_FEAR_CONFRONTATION;
+      if (pathStr.includes('1b_8c')) return SCENE_1B_9C_FULL_CONFESSION;
     }
 
-    // 第9层 - 最终结局
-    if (depth >= 9) {
+    // 第9层 - 继续分支
+    if (depth === 9) {
+      if (pathStr.includes('1b_9a')) return SCENE_1B_10A_RELATIONSHIP_GROWTH;
+      if (pathStr.includes('1b_9b')) return SCENE_1B_10A_RELATIONSHIP_GROWTH;
+      if (pathStr.includes('1b_9c')) return SCENE_1B_10A_RELATIONSHIP_GROWTH;
+      if (pathStr.includes('1b_9d')) return SCENE_1B_10B_FRIENDSHIP_CHOICE;
+      if (pathStr.includes('1b_9e')) return SCENE_1B_10A_RELATIONSHIP_GROWTH;
+      if (pathStr.includes('1b_9f')) return SCENE_1B_10B_FRIENDSHIP_CHOICE;
+    }
+
+    // 第10层 - 最终结局
+    if (depth === 10) {
+      if (pathStr.includes('1b_10a') || pathStr.includes('1b_10b')) {
+        return this.getEnding();
+      }
+    }
+
+    // 如果深度超过10层，直接返回结局
+    if (depth > 10) {
       return this.getEnding();
     }
 
@@ -2065,17 +3133,32 @@ export class LLMService {
       if (pathStr.includes('1c_7b')) return SCENE_1C_8A_FINAL_CHOICE;
     }
 
-    // 第8层 - 接近结局
+    // 第8层 - 继续分支
     if (depth === 8) {
-      if (pathStr.includes('1c_8a')) {
-        if (this.state.relationshipType === 'romantic') return ENDING_TRUE_LOVE;
-        return ENDING_REDEMPTION;
-      }
-      if (pathStr.includes('1c_8b')) return ENDING_FRIEND;
+      if (pathStr.includes('1c_8a')) return SCENE_1C_9A_NEW_BEGINNING;
+      if (pathStr.includes('1c_8b')) return SCENE_1C_9B_FEAR_AGAIN;
+      if (pathStr.includes('1c_8c')) return SCENE_1C_9C_700_APOLOGY;
     }
 
-    // 第9层 - 最终结局
-    if (depth >= 9) {
+    // 第9层 - 继续分支
+    if (depth === 9) {
+      if (pathStr.includes('1c_9a')) return SCENE_1C_10A_RELATIONSHIP_DEEPEN;
+      if (pathStr.includes('1c_9b')) return SCENE_1C_10B_FRIENDSHIP_PATH;
+      if (pathStr.includes('1c_9c')) return SCENE_1C_10A_RELATIONSHIP_DEEPEN;
+      if (pathStr.includes('1c_9d')) return SCENE_1C_10B_FRIENDSHIP_PATH;
+      if (pathStr.includes('1c_9e')) return SCENE_1C_10A_RELATIONSHIP_DEEPEN;
+      if (pathStr.includes('1c_9f')) return SCENE_1C_10B_FRIENDSHIP_PATH;
+    }
+
+    // 第10层 - 最终结局
+    if (depth === 10) {
+      if (pathStr.includes('1c_10a') || pathStr.includes('1c_10b')) {
+        return this.getEnding();
+      }
+    }
+
+    // 如果深度超过10层，直接返回结局
+    if (depth > 10) {
       return this.getEnding();
     }
 
@@ -2092,7 +3175,7 @@ export class LLMService {
   // 获取默认下一个场景（向后兼容）
   private getDefaultNextScene(path: string[], depth: number): SceneData {
     // 如果深度足够，进入结局
-    if (depth >= 8) {
+    if (depth > 10) {
       return this.getEnding();
     }
 
@@ -2288,30 +3371,44 @@ export class LLMService {
   }
 
   private getEnding(): SceneData {
-    const { affection, honesty, courage, hasConfessed, branch } = this.state;
+    const { intimacy, relationshipType, hasConfessed } = this.state;
 
-    // 真爱结局：高好感 + 高诚实 + 坦白过
-    if (affection >= 6 && honesty >= 5 && hasConfessed) {
+    // 基于亲密度判断结局（主要判断标准）
+    // 真爱结局：高亲密度(80+) + 浪漫关系 + 坦白过
+    if (intimacy >= 80 && relationshipType === 'romantic' && hasConfessed) {
       return ENDING_TRUE_LOVE;
     }
 
-    // 救赎结局：中好感 + 高诚实
-    if (affection >= 3 && honesty >= 6) {
+    // 救赎结局：中高亲密度(60-79) + 有坦白或高诚实
+    if (intimacy >= 60 && intimacy < 80 && (hasConfessed || this.state.honesty >= 6)) {
       return ENDING_REDEMPTION;
     }
 
-    // 挚友结局：中好感 + 友谊分支
-    if (affection >= 2 && branch === 'friend') {
+    // 挚友结局：中亲密度(40-79) + 朋友关系
+    if (intimacy >= 40 && intimacy < 80 && relationshipType === 'friend') {
       return ENDING_FRIEND;
     }
 
-    // 陌路结局：低好感
-    if (affection < 0 || branch === 'cold') {
+    // 遗憾结局：低亲密度(20-39) 或 中等亲密度但关系复杂
+    if (intimacy >= 20 && intimacy < 40) {
+      return ENDING_REGRET;
+    }
+
+    // 陌路结局：极低亲密度(<20) 或 陌生人关系
+    if (intimacy < 20 || relationshipType === 'stranger') {
       return ENDING_STRANGER;
     }
 
-    // 遗憾结局：默认
+    // 默认：根据亲密度范围判断
+    if (intimacy >= 80) {
+      return ENDING_TRUE_LOVE;
+    } else if (intimacy >= 60) {
+      return ENDING_REDEMPTION;
+    } else if (intimacy >= 40) {
+      return relationshipType === 'friend' ? ENDING_FRIEND : ENDING_REGRET;
+    } else {
     return ENDING_REGRET;
+    }
   }
 
   // 调试用：获取当前状态

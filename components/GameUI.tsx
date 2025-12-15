@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { GameUIProps, SceneData, Choice } from '../types';
 import TypingText from './TypingText';   // 明确同级
+import { llmService } from '../services/llmService';
 
 const GameUI: React.FC<GameUIProps> = ({ scene, onChoiceSelected, isLoading }) => {
   const [showChoices, setShowChoices] = useState(false);
   const [bgImage, setBgImage] = useState('');
+  const [intimacy, setIntimacy] = useState(0);
 
   const handleTextComplete = () => setShowChoices(true);
+
+  // 更新亲密度显示
+  useEffect(() => {
+    const state = llmService.getState();
+    setIntimacy(state.intimacy);
+  }, [scene]);
 
   useEffect(() => {
     setShowChoices(false);
@@ -22,8 +30,38 @@ const GameUI: React.FC<GameUIProps> = ({ scene, onChoiceSelected, isLoading }) =
     }
   }, [scene.narrative]);
 
+  // 根据亲密度获取颜色和文字
+  const getIntimacyColor = (value: number) => {
+    if (value >= 80) return 'text-pink-300';
+    if (value >= 60) return 'text-red-300';
+    if (value >= 40) return 'text-orange-300';
+    if (value >= 20) return 'text-yellow-300';
+    return 'text-gray-400';
+  };
+
+  const getIntimacyLabel = (value: number) => {
+    if (value >= 80) return '深爱';
+    if (value >= 60) return '亲密';
+    if (value >= 40) return '熟悉';
+    if (value >= 20) return '相识';
+    return '陌生';
+  };
+
   return (
     <div className="relative w-full h-full overflow-hidden bg-black select-none font-sans">
+      {/* 亲密度显示 - 右上角 */}
+      <div className="absolute top-6 right-6 z-30 bg-black/70 backdrop-blur-md border border-white/20 rounded-lg px-4 py-2 shadow-lg">
+        <div className="flex flex-col items-end gap-1">
+          <div className="text-xs text-gray-400 tracking-wider uppercase">亲密度</div>
+          <div className={`text-2xl font-bold ${getIntimacyColor(intimacy)}`}>
+            {intimacy}
+          </div>
+          <div className={`text-xs ${getIntimacyColor(intimacy)}`}>
+            {getIntimacyLabel(intimacy)}
+          </div>
+        </div>
+      </div>
+
       <div
         key={bgImage}
         className="absolute inset-0 bg-cover bg-center animate-[subtle-zoom_30s_infinite_alternate]"

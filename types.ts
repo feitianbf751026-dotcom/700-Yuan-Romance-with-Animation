@@ -10,7 +10,7 @@ export enum CharacterMood {
 export interface Choice {
   id: string;
   text: string;
-  sentiment: 'romantic' | 'neutral' | 'cold' | 'bold' | 'shy' | 'sad' | 'heroic';
+  sentiment: 'romantic' | 'neutral' | 'cold' | 'bold' | 'shy' | 'sad' | 'heroic' | 'honest';
 }
 
 export interface SceneData {
