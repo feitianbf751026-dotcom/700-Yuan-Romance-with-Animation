@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import StartScreen from './components/StartScreen';
 import GameUI from './components/GameUI';
+import FireflyPet from './components/FireflyPet';
 import { llmService } from './services/llmService';
 import { GameState, Choice } from './types';
 
@@ -79,6 +80,9 @@ const App: React.FC = () => {
                 isLoading={gameState.isLoading}
             />
            )}
+           
+           {/* 流萤桌面宠物 - 放在最后，确保在最上层 */}
+           <FireflyPet />
            
            {gameState.gameEnded && gameState.currentScene && (
              <div className="absolute inset-0 bg-black/95 flex flex-col items-center justify-center z-50 p-8 text-center transition-opacity duration-1000">

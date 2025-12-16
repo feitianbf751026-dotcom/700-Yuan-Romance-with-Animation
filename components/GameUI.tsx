@@ -48,7 +48,7 @@ const GameUI: React.FC<GameUIProps> = ({ scene, onChoiceSelected, isLoading }) =
   };
 
   return (
-    <div className="relative w-full h-full overflow-hidden bg-black select-none font-sans">
+    <div className="relative w-full h-full overflow-hidden bg-black select-none font-sans" style={{ pointerEvents: 'auto' }}>
       {/* 亲密度显示 - 右上角 */}
       <div className="absolute top-6 right-6 z-30 bg-black/70 backdrop-blur-md border border-white/20 rounded-lg px-4 py-2 shadow-lg">
         <div className="flex flex-col items-end gap-1">
