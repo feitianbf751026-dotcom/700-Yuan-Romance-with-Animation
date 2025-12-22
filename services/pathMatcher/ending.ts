@@ -1,4 +1,5 @@
-import { SceneData, PlayerState } from "../../types";
+import { SceneData } from "../../types";
+import { PlayerState } from "../types";
 import * as Scenes from "../scenes";
 
 /**

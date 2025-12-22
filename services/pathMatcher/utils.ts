@@ -2,7 +2,7 @@ import { SceneData } from "../../types";
 import * as Scenes from "../scenes";
 
 export function isStoryV2Enabled(): boolean {
-  return import.meta.env.VITE_STORY_V2 === 'true';
+  return (import.meta as any).env?.VITE_STORY_V2 === 'true';
 }
 
 export function normalizeChoiceId(choiceId: string): string {

@@ -6,10 +6,11 @@ import { getDefaultNextScene, matchWithFallbackV2, normalizeChoiceId, hasToken, 
  * 1C分支树匹配 - 完整的10层树状结构
  */
 export function match1CBranch(path: string[], depth: number): SceneData {
-  return matchWithFallbackV2(
-    () => match1CBranchLegacy(path, depth),
-    () => match1CBranchStrict(path, depth)
-  );
+  const strictResult = match1CBranchStrict(path, depth);
+  if (strictResult) {
+    return strictResult;
+  }
+  return getDefaultNextScene(path, depth);
 }
 
 /**
