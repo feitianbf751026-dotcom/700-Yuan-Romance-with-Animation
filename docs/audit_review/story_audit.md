@@ -1,0 +1,109 @@
+﻿# 剧情树审计
+
+## 扫描范围
+- services/scenes/*.ts
+- services/pathMatcher/*
+- services/stateManager/*
+- App.tsx
+- components/GameUI.tsx
+
+## 统计概览
+- 节点总数: 207 (SCENE 202 + ENDING 5)
+- 选择总数: 422
+- 出度分布: 0: 5, 1: 8, 2: 168, 3: 26
+
+每层节点数(按场景名数字推断; ENDING 单独统计):
+
+| 层 | 节点数 |
+| --- | --- |
+| 0 | 1 |
+| 1 | 28 |
+| 2 | 10 |
+| 3 | 10 |
+| 4 | 21 |
+| 5 | 22 |
+| 6 | 22 |
+| 7 | 25 |
+| 8 | 25 |
+| 9 | 27 |
+| 10 | 11 |
+| ending | 5 |
+
+## 1-choice 节点
+- SCENE_1A_10A_FINAL_BLESSING
+- SCENE_1A_10B_FINAL_CONFESSION
+- SCENE_1A_10C_ACCEPTANCE
+- SCENE_1A_10D_FINAL_SEARCH
+- SCENE_1B_10A_RELATIONSHIP_GROWTH
+- SCENE_1B_10B_FRIENDSHIP_CHOICE
+- SCENE_1C_10A_RELATIONSHIP_DEEPEN
+- SCENE_1C_10B_FRIENDSHIP_PATH
+
+## 分支爆炸点(出度=3 且指向 >=3 个不同下游)
+- SCENE_2_REUNION
+- SCENE_3_LUNCH
+- SCENE_1B_MESSAGE
+- SCENE_1B_CHAT
+- SCENE_1B_4C_HESITATION
+- SCENE_1B_8A_RELATIONSHIP_DEFINE
+- SCENE_1A_4C_DAILY_LIFE
+- SCENE_1C_8A_FINAL_CHOICE
+- SCENE_1C_4C_GUILT_DEEPEN
+- SCENE_1A_7C_CONFESSION_MOMENT / SCENE_1B_7B_CONFESSION_MOMENT / SCENE_1C_7B_CONFESSION_MOMENT (自循环与分叉叠加)
+
+## 收束点(入度 Top 10)
+1. SCENE_1B_9A_FIRST_DATE (9)
+2. SCENE_1A_8A_CONFESSION (8)
+3. SCENE_1C_8A_FINAL_CHOICE (8)
+4. SCENE_1A_BUILDING_TRUST (7)
+5. SCENE_1B_9B_FEAR_CONFRONTATION (7)
+6. SCENE_1C_7A_RELATIONSHIP_GROW (7)
+7. SCENE_1A_7A_RELATIONSHIP_GROW (6)
+8. SCENE_1A_9A_REUNION_ATTEMPT (6)
+9. SCENE_1A_9B_FINAL_GOODBYE (6)
+10. SCENE_1B_10A_RELATIONSHIP_GROWTH (6)
+
+## 结构/配置风险
+- choice id 重复(12 个):
+  - 1a_6a/1a_6b 在 SCENE_1A_FIRST_MEET 与 SCENE_1A_6A_COFFEE_DEEP
+  - 1a_6c/1a_6d 在 SCENE_1A_BUILDING_TRUST 与 SCENE_1A_6B_ELEVATOR_CONTINUE
+  - 1a_8a/1a_8b 在 SCENE_1A_ELEVATOR_TALK 与 SCENE_1A_8A_CONFESSION
+  - 1a_9a/1a_9b 在 SCENE_1A_STALKING 与 SCENE_1A_9A_REUNION_ATTEMPT
+  - 1c_6a/1c_6b 在 SCENE_1C_DEEP_CONVERSATION 与 SCENE_1C_6A_DEEP_TALK
+  - 1c_7a/1c_7b 在 SCENE_1C_FRIENDSHIP 与 SCENE_1C_7A_RELATIONSHIP_GROW
+- choice -> next 映射缺失: 108 个 choice id 未在 pathMatcher 中出现, 典型包括 `p1/p2/p3`, `4_*`~`9_*`, `1b_6b_*`, `1b_6c_*`, `1b_6d_*`, `1c_4a/4b`, `1a_10*`, `1b_10*`, `1c_10*` 等。
+- pathMatcher 中大量 `pathStr.includes` 为非末尾匹配, 与重复 choice id 叠加时会导致“选择无意义/走向不稳定”。
+
+## 抽样检查 30 个节点(选择 -> 下个节点)
+| # | 节点 | 选择 | 下个节点 | 结论 |
+| --- | --- | --- | --- | --- |
+| 1 | SCENE_2_REUNION | 2_1 递纸巾 | SCENE_2_1_AWKWARD | OK |
+| 2 | SCENE_2_REUNION | 2_2 直接确认身份 | SCENE_2_2_RECOGNITION | OK |
+| 3 | SCENE_2_REUNION | 2_3 假装不认识离开 | SCENE_2_3_ESCAPE | OK |
+| 4 | SCENE_2_1_AWKWARD | 2_1a 承认并道歉 | SCENE_2_1A_CONFESSION | OK |
+| 5 | SCENE_2_1_AWKWARD | 2_1b 继续装傻离开 | SCENE_2_1B_CONTINUE_ESCAPE | OK |
+| 6 | SCENE_2_2_RECOGNITION | 2_2a 邀约咖啡 | SCENE_2_2A_COFFEE_INVITATION | OK |
+| 7 | SCENE_2_2_RECOGNITION | 2_2b 还是算了 | SCENE_2_2B_HESITATE | OK |
+| 8 | SCENE_3_LUNCH | 3_1 接受邀请 | SCENE_3_1_LUNCH_TALK | OK |
+| 9 | SCENE_3_LUNCH | 3_2 拒绝午餐 | SCENE_3_2_REJECTION | OK |
+| 10 | SCENE_3_LUNCH | 3_3 先道歉 | SCENE_3_3_APOLOGY | OK |
+| 11 | SCENE_1A_LIFE | 1a_2 继续逃避 | SCENE_1A_DEEP_WORK | OK |
+| 12 | SCENE_1A_LIFE | 1a_3 想要改变 | SCENE_1A_TRY_CHANGE | OK |
+| 13 | SCENE_1A_DEEP_WORK | 1a_2a 继续到崩溃 | SCENE_1A_4A_WORK_COLLAPSE | OK |
+| 14 | SCENE_1A_DEEP_WORK | 1a_2b 尝试改变 | SCENE_1A_4B_TRY_SOCIAL | OK |
+| 15 | SCENE_1A_STRUGGLE | 1a_4 主动上前 | SCENE_1A_CONFRONT | OK |
+| 16 | SCENE_1A_STRUGGLE | 1a_5 继续观察 | SCENE_1A_OBSERVE | OK |
+| 17 | SCENE_1A_4C_DAILY_LIFE | 1a_4c_a 鼓起勇气 | SCENE_1A_5C_FIRST_CONTACT | 重复内容(与 1A_5A_CAFETERIA_TALK 高度相似) |
+| 18 | SCENE_1A_4C_DAILY_LIFE | 1a_4c_b 继续逃避 | SCENE_1A_5D_MISSED_CHANCE | 重复内容/差异弱(与 1A_5B_AVOID_AGAIN 走向接近) |
+| 19 | SCENE_1A_5A_CAFETERIA_TALK | 1a_5a 去咖啡店 | SCENE_1A_6A_COFFEE_DEEP | OK |
+| 20 | SCENE_1A_6B_ELEVATOR_CONTINUE | 1a_6d 继续观察 | SCENE_1A_7B_STALKING_DISCOVERED | 衔接突兀(动机升级过快) |
+| 21 | SCENE_1B_MESSAGE | 1b_1 删除好友 | SCENE_1B_DELETED | OK |
+| 22 | SCENE_1B_MESSAGE | 1b_2 解释退单 | SCENE_1B_CHAT | OK |
+| 23 | SCENE_1B_DELETED | 1b_1a 主动道歉 | SCENE_1B_APOLOGY | OK |
+| 24 | SCENE_1B_APOLOGY | 1b_1ac 重新认识 | SCENE_2_REUNION | 衔接突兀/状态无反馈(直接跳到三个月后重逢) |
+| 25 | SCENE_1A_7A_RELATIONSHIP_GROW | 1a_7a 不只是朋友 | SCENE_1A_7A_RELATIONSHIP_GROW / SCENE_1A_8A_CONFESSION | 选择无意义/歧义(重复 choice id 导致路径不稳定) |
+| 26 | SCENE_1C_GUILT | 1c_2 主动道歉 | SCENE_1C_FIRST_MESSAGE | OK |
+| 27 | SCENE_1C_GUILT | 1c_3 继续观察 | SCENE_1C_STALKING | OK |
+| 28 | SCENE_1C_FIRST_MESSAGE | 1c_2a 接受见面 | SCENE_1C_MEETING | OK |
+| 29 | SCENE_1C_FIRST_MESSAGE | 1c_2b 暂不见面 | SCENE_1C_4A_GUILT_OBSERVE | OK |
+| 30 | SCENE_1C_4C_GUILT_DEEPEN | 1c_4c_a 寻求原谅 | SCENE_1C_4D_SEEK_FORGIVE | OK |
