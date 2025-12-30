@@ -4,17 +4,20 @@ import { SceneData, Choice } from "../types";
 // 分支剧情系统 - 多结局版本
 // ============================================================================
 
+
 // 玩家状态追踪 - 树状分支系统
 interface PlayerState {
   affection: number;        // 好感度 (-10 到 10)
   courage: number;          // 勇气值 (0 到 10)
   honesty: number;          // 诚实度 (0 到 10)
+
   path: string[];           // 选择路径，用于树状分支匹配
   depth: number;            // 当前深度（0-10层）
   stage: number;            // 当前阶段（向后兼容）
   branch: 'main' | 'cold' | 'romantic' | 'friend'; // 当前分支（向后兼容）
   hasConfessed: boolean;    // 是否坦白过
   specialEvents: string[];  // 触发的特殊事件
+
   relationshipType: 'stranger' | 'friend' | 'romantic' | 'complicated'; // 关系类型
   intimacy: number;         // 亲密度 (0 到 100)，由综合算法计算
 }
@@ -24,6 +27,7 @@ interface PlayerState {
 // ============================================================================
 
 const SCENE_0_PROLOGUE: SceneData = {
+
   narrative: `手机屏幕的光在昏暗的走廊里显得格外刺眼。APP上的订单显示"已接单"，备注栏里写着"全套服务，不过夜"。我盯着微信支付里刚刚转出去的700元，又抬头看了看面前的302号房门。
 
 走廊里很安静，只有远处电梯运行的嗡嗡声。门缝里透出微弱的电视光，还有隐约的说话声——她在打电话，声音很轻，听不清内容，但能感觉到她的紧张。
@@ -38,6 +42,7 @@ const SCENE_0_PROLOGUE: SceneData = {
   backgroundDescription: "dark hotel hallway, pov looking at door number 302, phone screen glowing, moody cinematic lighting, wong kar wai style",
   choices: [
     { id: "p1", text: "直接转身逃跑，什么都不说", sentiment: "shy" },
+
     { id: "p2", text: "给她发消息：\"对不起，我来不了\"", sentiment: "neutral" },
     { id: "p3", text: "站在门口纠结很久，最终还是走了", sentiment: "cold" }
   ],
@@ -46,6 +51,7 @@ const SCENE_0_PROLOGUE: SceneData = {
 
 // 分支1A：直接逃跑（懦弱路线）
 const SCENE_1A_PANIC: SceneData = {
+
   narrative: `我转身就跑。
 
 电梯太慢，我直接冲下楼梯，三步并作两步，一口气跑到街上。雨开始下了，细密的雨丝打在脸上，冰凉刺骨。我任由雨水冲刷，心跳如擂鼓，呼吸急促得像是要窒息。
@@ -61,12 +67,11 @@ const SCENE_1A_PANIC: SceneData = {
   speaker: "内心独白",
   backgroundDescription: "rainy city street at night, protagonist running in panic, neon reflections, self-loathing atmosphere",
   choices: [
-    { id: "1a_1", text: "试图彻底忘记这件事，继续生活", sentiment: "cold" },
-    { id: "1a_1b", text: "开始感到深深的内疚和后悔", sentiment: "sad" },
-    { id: "1a_1c", text: "决定改变自己，不再逃避", sentiment: "bold" }
+    { id: "1a_1", text: "【继续】", sentiment: "neutral" }
   ],
   isEnding: false
 };
+
 
 const SCENE_1A_LIFE: SceneData = {
   narrative: `接下来的一个月，我把自己埋在工作里。加班到深夜，周末也待在办公室，用忙碌麻痹自己。
@@ -294,6 +299,7 @@ const SCENE_1A_STALKING: SceneData = {
 
 // 分支1B：发消息道歉（诚实路线）
 const SCENE_1B_MESSAGE: SceneData = {
+
   narrative: `我的手指在屏幕上打字，删了又写，写了又删。走廊里的感应灯灭了，我站在黑暗中，只有手机屏幕的光照亮我的脸。
 
 最后发出去的只有简单的几个字：
@@ -302,13 +308,16 @@ const SCENE_1B_MESSAGE: SceneData = {
 
 发送。
 
+
 我盯着屏幕看了很久，对方一直没回。时间一分一秒地过去，每一秒都像是煎熬。我正准备离开，手机震了一下。
 
 "没关系的。"
 
+
 然后又是一条，间隔了几秒："不过既然你付了钱，我有义务问一句——你还好吗？"
 
 我愣住了。这是职业话术吗？还是……真的在关心我？
+
 
 "如果只是想找人聊聊天，其实不用这样的。"
 
@@ -317,6 +326,7 @@ const SCENE_1B_MESSAGE: SceneData = {
   speaker: "内心独白",
   backgroundDescription: "phone screen close-up, chat messages glowing in dark hallway, warm text bubbles",
   choices: [
+
     { id: "1b_1", text: "\"谢谢，我没事。\"然后删除好友", sentiment: "cold" },
     { id: "1b_2", text: "\"对不起，我只是……做不到那种事。\"", sentiment: "shy" },
     { id: "1b_3", text: "\"其实，能聊聊吗？我请你喝咖啡。\"", sentiment: "bold" }
@@ -533,27 +543,31 @@ const SCENE_1B_REGULAR_MEET: SceneData = {
 
 // 分支1C：犹豫很久才走（内疚路线）
 const SCENE_1C_HESITATE: SceneData = {
+
   narrative: `我站在门口站了很久，久到走廊的感应灯都灭了两次。
+
 
 手机屏幕在黑暗中发着光，微信支付的记录刺眼地提醒着我——700元，已支付。那数字在屏幕上跳动着，像是在嘲笑我的犹豫。
 
 我能听到门里传来的声音，她在打电话："嗯……客人好像还没到……可能路上堵车吧。"
 
+
 声音很轻，带着一丝不确定。那一刻，我突然意识到，门的另一边也是一个活生生的人。她也在等，也会紧张，也会想这个陌生人会是什么样。
 
+
 我抬起手，想要敲门，但手指悬在半空中，怎么也落不下去。
+
 
 最终，我还是走了。但我没有删除联系方式，只是备注改成了"700元"。那三个字，像是一个标记，提醒我那个我永远无法忘记的夜晚。`,
   dialogue: "（对不起……）",
   speaker: "内心独白",
   backgroundDescription: "dark hallway, motion sensor lights turning off, phone light illuminating protagonist's conflicted face",
   choices: [
-    { id: "1c_1", text: "删除联系方式，彻底忘记这件事", sentiment: "cold" },
-    { id: "1c_1b", text: "保留联系方式，等待合适的机会", sentiment: "neutral" },
-    { id: "1c_1c", text: "开始观察她的动态，了解她", sentiment: "shy" }
+    { id: "1c_1", text: "【继续】", sentiment: "neutral" }
   ],
   isEnding: false
 };
+
 
 const SCENE_1C_GUILT: SceneData = {
   narrative: `那700块钱成了我心里的一个结。一个解不开的结，一个让我夜不能寐的结。
@@ -703,8 +717,10 @@ const SCENE_1C_FRIENDSHIP: SceneData = {
 // ============================================================================
 
 const SCENE_2_REUNION: SceneData = {
+
   narrative: `
 三个月后。公司楼下的全家便利店。
+
 
 外面下着梅雨，细密的雨丝打在玻璃窗上，模糊了外面的世界。我等着微波炉热饭团，盯着那个旋转的盘子，听着"叮"的一声。
 
@@ -720,6 +736,7 @@ const SCENE_2_REUNION: SceneData = {
   backgroundDescription: "convenience store interior, rainy window, fluorescent lighting, slice of life anime style",
   choices: [
     { id: "2_1", text: "僵硬地递过去，不敢对视", sentiment: "shy" },
+
     { id: "2_2", text: "\"你是……那天的？\"", sentiment: "bold" },
     { id: "2_3", text: "假装不认识，拿了饭团就走", sentiment: "cold" }
   ],
@@ -731,6 +748,7 @@ const SCENE_2_REUNION: SceneData = {
 // ============================================================================
 
 const SCENE_3_LUNCH: SceneData = {
+
   narrative: `
 她认出我了。无论我怎么装，她那双眼睛里闪过的惊讶和复杂的情绪都出卖了一切。那眼神里有困惑，有好奇，还有一丝我读不懂的东西。
 
@@ -750,6 +768,7 @@ const SCENE_3_LUNCH: SceneData = {
   backgroundDescription: "company cafeteria, warm afternoon light, casual atmosphere",
   choices: [
     { id: "3_1", text: "接受邀请，坐下来聊", sentiment: "romantic" },
+
     { id: "3_2", text: "\"不好意思，我赶时间。\"", sentiment: "cold" },
     { id: "3_3", text: "\"其实我想先道个歉……\"", sentiment: "bold" }
   ],
@@ -2143,22 +2162,28 @@ const SCENE_1C_10B_FRIENDSHIP_PATH: SceneData = {
 // ============================================================================
 
 const ENDING_TRUE_LOVE: SceneData = {
+
   narrative: `
 公园的长椅上，我把那一夜所有的恐惧、羞耻、自我怀疑全盘托出。每一个字都像是从心底挖出来的，带着血，带着痛。
 
 "我逃跑不是因为嫌弃你，是因为我嫌弃我自己。我怕进了那扇门，就再也回不去了。"
 
+
 琳安静地听完，眼眶红了。月光洒在她脸上，把眼泪照得闪闪发光。
 
 "笨蛋。"她突然笑了，眼泪却掉了下来，"那天你跑掉的时候，我反而松了口气。因为我也是第一次接那种单，吓死了。"
 
+
 "什么？"我愣住了。
 
+
 "我那阵子家里出事，急需用钱。但真到了那一刻，我也不知道自己能不能做到……"她握住我的手，手心很暖，"所以谢谢你，那天没敲门。"
+
 
 月光下，我们的手紧紧相握。那一刻，我突然觉得，也许，这700块钱，是我这辈子花得最值得的一笔钱。
 
 "那这700块……"
+
 
 "就当我们的定情信物吧。"她笑着说，眼泪还在掉，"不过下次约会，你得请我吃好一点的。"`,
   dialogue: "\"我们回家吧。\"",
@@ -2170,16 +2195,21 @@ const ENDING_TRUE_LOVE: SceneData = {
 };
 
 const ENDING_FRIEND: SceneData = {
+
   narrative: `
 "我明白了。"琳点点头，声音很轻，"那天的事，我们都当它没发生过吧。"
 
+
 "真的可以吗？"我问，声音里带着一丝不确定。
+
 
 "为什么不可以？"她笑得很轻松，但眼神很认真，"人生那么长，谁没有几件想忘记的事呢。"
 
 后来，我们成了很好的同事，很好的朋友。偶尔一起加班，一起吐槽公司的奇葩客户，一起在深夜的便利店买打折便当。
 
+
 那700块钱，最后变成了我们的梗——每次我请客，她都会说："行啊，反正你还欠我700。"然后我们就会笑，笑得很大声，像是要把所有的尴尬和羞耻都笑掉。
+
 
 有些关系，不是爱情，却同样珍贵。就像那700块钱，买来的不是交易，而是一段真正的友谊。`,
   dialogue: "\"下次一起吃饭，你请客。\"",
@@ -2191,10 +2221,13 @@ const ENDING_FRIEND: SceneData = {
 };
 
 const ENDING_REGRET: SceneData = {
+
   narrative: `
 "对不起，我不能接受这样的开始。"琳站起身，眼神里是深深的失望。那种失望，比愤怒更让人难受。
 
+
 "我本来以为……算了，不重要了。"她的声音很轻，但每个字都像是刀子，割在我心上。
+
 
 她转身离开，背影消失在夜色里。我想追上去，但腿像灌了铅一样沉重。我只能站在原地，看着她走远，直到再也看不见。
 
@@ -2203,6 +2236,7 @@ const ENDING_REGRET: SceneData = {
 那700块钱，成了我心里永远的刺。每次路过那家酒店，我都会想：如果那天我更勇敢一点，如果我更早说出真相……
 
 但人生没有如果。
+
 
 我们错过了。就像两条平行线，永远不会有交集。`,
   dialogue: "（再见了……）",
@@ -2214,20 +2248,27 @@ const ENDING_REGRET: SceneData = {
 };
 
 const ENDING_REDEMPTION: SceneData = {
+
   narrative: `
 "我不能说我完全原谅你。"琳看着我，眼神很认真，"但我理解你当时的感受。"
 
+
 "我……"我想说什么，但话到嘴边又咽了回去。
+
 
 "嘘。"她伸出手指抵住我的嘴唇，动作很轻，但很坚定，"过去的事就让它过去吧。如果你真的想补偿我，那就……"
 
+
 "请我吃一个月的早餐，怎么样？"她笑了，那笑容很轻，但很真实，"不许迟到，不许偷懒。"
 
+
 "成交！"我说，声音比我想象的要坚定。
+
 
 从那天起，每天早上7点，我们会在便利店门口碰面。她喝豆浆配包子，我喝咖啡配三明治。有时候我们会聊几句，有时候只是安静地坐着，看着窗外的阳光慢慢亮起来。
 
 一个月后，她说："早餐可以停了，但晚餐得继续。"
+
 
 我说："那就一辈子吧。"
 
@@ -2241,14 +2282,18 @@ const ENDING_REDEMPTION: SceneData = {
 };
 
 const ENDING_STRANGER: SceneData = {
+
   narrative: `
 我选择了沉默。她也没有再问。
+
 
 从那天起，我们偶尔还会在电梯里遇到，在食堂擦肩而过。我们会点头，会说"你好"，但仅此而已。就像两条平行线，永远不会有交集。
 
 她交了男朋友，听说是另一个部门的主管。我在交友软件上划来划去，却再也找不到能让我心动的人。
 
+
 那700块钱，最终什么都没有买到。没有陪伴，没有理解，没有改变。什么都没有。
+
 
 我们成了最熟悉的陌生人。有时候我会想，如果那天我敲门了，现在会是什么样子？但人生没有如果。
 
@@ -2270,11 +2315,14 @@ export class LLMService {
     affection: 0,
     courage: 0,
     honesty: 0,
+
     path: [],
     depth: 0,
     stage: 0,
+
     branch: 'main',
     hasConfessed: false,
+
     specialEvents: [],
     relationshipType: 'stranger',
     intimacy: 0
@@ -2293,13 +2341,26 @@ export class LLMService {
     
     // 1. 基础好感度转换 (好感度范围 -10到10，转换为0-35分)
     // 好感度是亲密度的基础，但非线性：负好感会大幅降低，正好感需要配合其他因素
+    // 修复：保证在 affection=0 处连续，避免不连续跳跃
     let baseScore = 0;
     if (affection >= 0) {
       // 正好感：指数增长，但需要配合其他因素
       baseScore = Math.pow(affection / 10, 0.7) * 35; // 0->0, 5->20, 10->35
     } else {
       // 负好感：线性惩罚，但不会完全归零（因为可能有其他因素）
-      baseScore = Math.max(0, (affection + 10) * 1.5); // -10->0, -5->7.5, 0->15
+      // 修复：在 affection=0 处与正分支连续
+      // 原逻辑：-10->0, -5->7.5, 0->15，但在 0 处不连续（正分支为 0）
+      // 修复：在 [-1, 0] 范围内使用线性插值，使 0 处连续
+      if (affection >= -1) {
+        // 在 [-1, 0] 范围内，从 -1 处的值线性过渡到 0，保证在 0 处连续
+        // 原逻辑在 -1 处：(-1 + 10) * 1.5 = 13.5
+        // 线性插值：从 13.5 过渡到 0
+        const valueAtMinusOne = (-1 + 10) * 1.5; // 13.5
+        baseScore = valueAtMinusOne * (1 + affection); // affection=-1时=13.5, affection=0时=0（连续）
+      } else {
+        // 在 [-10, -1] 范围内，使用原逻辑
+        baseScore = Math.max(0, (affection + 10) * 1.5); // -10->0, -5->7.5, -1->13.5
+      }
     }
     
     // 2. 勇气与诚实的协同效应 (0-30分)
@@ -2345,18 +2406,10 @@ export class LLMService {
     // 5. 特殊事件的累积效应 (0-12分)
     // 正面事件会累积，但边际效应递减
     const positiveEvents = [
-      // 原有事件
       'normal_meet', 'coffee_date', 'coffee_talk', '1a_first_meet',
       '1b_apology', '1c_first_message', '1a_building_trust',
       '1b_regular_meet', '1c_deep_conversation', '1a_confront',
-      '1b_deep_chat', '1c_meeting',
-      // 新增事件（匹配10层树状剧情）
-      '1a_try_change',      // 1A分支尝试改变（正面）
-      '1a_elevator_talk',    // 1A分支电梯谈话（正面）
-      '1b_2',                // 1B分支回复消息（正面）
-      '1b_plan_meet',        // 1B分支计划见面（正面）
-      '1c_friendship',       // 1C分支友谊（正面）
-      'had_lunch'            // 午餐事件（正面）
+      '1b_deep_chat'
     ];
     const eventCount = specialEvents.filter(e => positiveEvents.includes(e)).length;
     // 边际效应递减：第一个事件+3分，第二个+2.5分，第三个+2分...
@@ -2368,12 +2421,7 @@ export class LLMService {
     
     // 6. 负面事件的惩罚 (最多-15分)
     // 负面事件会显著降低亲密度，但不会完全抵消正面因素
-    const negativeEvents = [
-      // 原有事件
-      '1a_stalking', '1b_1', '1a_escape',
-      // 新增事件（匹配10层树状剧情）
-      '1c_stalking'  // 1C分支跟踪（负面）
-    ];
+    const negativeEvents = ['1a_stalking', '1b_1'];
     const negativeCount = specialEvents.filter(e => negativeEvents.includes(e)).length;
     const eventPenalty = Math.min(15, negativeCount * 4);
     
@@ -2422,11 +2470,14 @@ export class LLMService {
       affection: 0,
       courage: 0,
       honesty: 0,
+
       path: [],
       depth: 0,
       stage: 0,
+
       branch: 'main',
       hasConfessed: false,
+
       specialEvents: [],
       relationshipType: 'stranger',
       intimacy: 0
@@ -2437,12 +2488,14 @@ export class LLMService {
   async nextTurn(history: any[], choiceId: string): Promise<SceneData> {
     await new Promise(resolve => setTimeout(resolve, 800));
 
+
     // 记录选择路径
     this.state.path.push(choiceId);
     this.state.depth++;
 
     // 根据选择更新状态
     this.updateState(choiceId);
+
 
     // 根据路径决定下一个场景（树状匹配）
     return this.getNextSceneByPath();
@@ -2467,22 +2520,11 @@ export class LLMService {
       // 犹豫很久：内疚但没行动
       this.state.honesty += 1;
       this.state.affection -= 1;
+
     }
 
     // 1A分支后续选择
-    if (choiceId === "1a_1") {
-      // 试图彻底忘记 - 降低好感度和勇气
-      this.state.affection -= 2;
-      this.state.courage -= 1;
-    } else if (choiceId === "1a_1b") {
-      // 开始感到内疚 - 增加诚实度
-      this.state.honesty += 1;
-      this.state.affection -= 1;
-    } else if (choiceId === "1a_1c") {
-      // 决定改变 - 增加勇气
-      this.state.courage += 2;
-      this.state.specialEvents.push('1a_try_change');
-    } else if (choiceId === "1a_2") {
+    if (choiceId === "1a_2") {
       this.state.courage -= 1;
       this.state.affection -= 1;
       this.state.specialEvents.push('1a_deep_work');
@@ -2561,12 +2603,6 @@ export class LLMService {
       this.state.courage -= 2;
       this.state.affection -= 2;
       this.state.specialEvents.push('1a_stalking');
-    } else if (choiceId === "1a_8a") {
-      this.state.courage += 2;
-      this.state.affection += 2;
-      this.state.specialEvents.push('normal_meet');
-    } else if (choiceId === "1a_8b") {
-      this.state.courage -= 1;
     } else if (choiceId === "1a_9a") {
       this.state.courage += 2;
       this.state.honesty += 2;
@@ -2580,16 +2616,19 @@ export class LLMService {
     if (choiceId === "1b_1") {
       this.state.branch = 'cold';
       this.state.affection -= 3;
+
       this.state.specialEvents.push('1b_1');
     } else if (choiceId === "1b_2") {
       this.state.honesty += 2;
       this.state.affection += 2;
+
       this.state.specialEvents.push('1b_2');
     } else if (choiceId === "1b_3") {
       this.state.courage += 3;
       this.state.affection += 3;
       this.state.specialEvents.push('coffee_date');
     }
+
 
     // 1B分支后续选择
     if (choiceId === "1b_1a") {
@@ -2672,19 +2711,7 @@ export class LLMService {
     }
 
     // 1C分支后续选择
-    if (choiceId === "1c_1") {
-      // 删除联系方式 - 降低好感度
-      this.state.affection -= 2;
-      this.state.courage -= 1;
-    } else if (choiceId === "1c_1b") {
-      // 保留联系方式 - 中性选择
-      this.state.affection += 0;
-      this.state.courage += 0;
-    } else if (choiceId === "1c_1c") {
-      // 开始观察 - 增加勇气但可能触发跟踪
-      this.state.courage += 1;
-      this.state.specialEvents.push('1c_stalking');
-    } else if (choiceId === "1c_2") {
+    if (choiceId === "1c_2") {
       this.state.courage += 2;
       this.state.honesty += 2;
       this.state.specialEvents.push('1c_first_message');
@@ -2750,15 +2777,18 @@ export class LLMService {
       this.state.hasConfessed = true;
     } else if (choiceId === "2_3") {
       this.state.affection -= 2;
+
       this.state.relationshipType = 'stranger';
     }
 
     // 午餐场景选择
     if (choiceId === "3_1") {
       this.state.affection += 2;
+
       this.state.relationshipType = 'romantic';
     } else if (choiceId === "3_2") {
       this.state.affection -= 1;
+
       this.state.relationshipType = 'stranger';
     } else if (choiceId === "3_3") {
       this.state.honesty += 3;
@@ -2766,6 +2796,7 @@ export class LLMService {
       this.state.affection += 2;
       this.state.hasConfessed = true;
     }
+
 
     // SCENE_2_REUNION和SCENE_3_LUNCH的后续选择状态更新
     if (choiceId === "2_1a") {
@@ -2810,121 +2841,6 @@ export class LLMService {
       this.state.relationshipType = 'friend';
     }
 
-    // SCENE_2_1A_CONFESSION的后续选择（2_1aa, 2_1ab）
-    if (choiceId === "2_1aa") {
-      this.state.affection += 4;
-      this.state.courage += 3;
-      this.state.honesty += 2;
-      this.state.relationshipType = 'romantic';
-      this.state.hasConfessed = true;
-    } else if (choiceId === "2_1ab") {
-      this.state.affection += 1;
-      this.state.courage -= 1;
-    }
-
-    // SCENE_2_2A_COFFEE_INVITATION的后续选择（2_2aa, 2_2ab）
-    if (choiceId === "2_2aa") {
-      this.state.affection += 4;
-      this.state.courage += 3;
-      this.state.relationshipType = 'romantic';
-      this.state.specialEvents.push('normal_meet');
-    } else if (choiceId === "2_2ab") {
-      this.state.affection += 2;
-      this.state.relationshipType = 'friend';
-    }
-
-    // SCENE_2_3A_TURN_BACK的后续选择（2_3aa, 2_3ab）
-    if (choiceId === "2_3aa") {
-      this.state.affection += 3;
-      this.state.courage += 2;
-      this.state.specialEvents.push('normal_meet');
-    } else if (choiceId === "2_3ab") {
-      this.state.courage -= 1;
-      this.state.affection -= 1;
-    }
-
-    // SCENE_3_1A_AGREE的后续选择（3_1aa, 3_1ab）
-    if (choiceId === "3_1aa") {
-      this.state.affection += 4;
-      this.state.courage += 3;
-      this.state.relationshipType = 'romantic';
-    } else if (choiceId === "3_1ab") {
-      this.state.affection += 2;
-      this.state.relationshipType = 'friend';
-    }
-
-    // SCENE_3_2A_REGRET的后续选择（3_2aa, 3_2ab）
-    if (choiceId === "3_2aa") {
-      this.state.affection += 3;
-      this.state.courage += 3;
-      this.state.honesty += 2;
-      this.state.hasConfessed = true;
-    } else if (choiceId === "3_2ab") {
-      this.state.courage -= 2;
-      this.state.affection -= 2;
-    }
-
-    // SCENE_3_3A_NEW_START的后续选择（3_3aa, 3_3ab）
-    if (choiceId === "3_3aa") {
-      this.state.affection += 4;
-      this.state.courage += 3;
-      this.state.relationshipType = 'romantic';
-    } else if (choiceId === "3_3ab") {
-      this.state.affection += 2;
-      this.state.relationshipType = 'friend';
-    }
-
-    // 第9层选择（1a_9c, 1a_9c2, 1a_9d, 1a_9e）
-    if (choiceId === "1a_9c") {
-      this.state.affection -= 1;
-      this.state.courage -= 1;
-    } else if (choiceId === "1a_9c2") {
-      this.state.affection += 2;
-      this.state.courage += 3;
-    } else if (choiceId === "1a_9d") {
-      this.state.affection += 1;
-      this.state.honesty += 1;
-    } else if (choiceId === "1a_9e") {
-      this.state.affection += 3;
-      this.state.courage += 2;
-      this.state.honesty += 2;
-      this.state.hasConfessed = true;
-    }
-
-    // 第10层选择（1a_10a, 1a_10b, 1a_10c, 1a_10d）
-    // 这些是结局前的最后选择，通常只影响最终状态
-    if (choiceId === "1a_10a") {
-      this.state.affection += 1;
-      this.state.honesty += 1;
-    } else if (choiceId === "1a_10b") {
-      this.state.affection += 2;
-      this.state.courage += 1;
-      this.state.honesty += 2;
-      this.state.hasConfessed = true;
-    } else if (choiceId === "1a_10c") {
-      this.state.affection += 1;
-    } else if (choiceId === "1a_10d") {
-      this.state.affection += 2;
-      this.state.courage += 2;
-    }
-
-    // 1B和1C分支的第10层选择
-    if (choiceId === "1b_10a") {
-      this.state.affection += 3;
-      this.state.courage += 2;
-      this.state.relationshipType = 'romantic';
-    } else if (choiceId === "1b_10b") {
-      this.state.affection += 2;
-      this.state.relationshipType = 'friend';
-    } else if (choiceId === "1c_10a") {
-      this.state.affection += 3;
-      this.state.courage += 2;
-      this.state.relationshipType = 'romantic';
-    } else if (choiceId === "1c_10b") {
-      this.state.affection += 2;
-      this.state.relationshipType = 'friend';
-    }
-
     // 更新亲密度（每次状态更新后重新计算）
     this.state.intimacy = this.calculateIntimacy();
   }
@@ -2947,18 +2863,7 @@ export class LLMService {
     }
 
     // 使用路径匹配来决定场景（树状结构）
-    const nextScene = this.matchSceneByPath(path, depth);
-    
-    // 关键修复：只有当场景是叶子节点（isEnding: true 或 choices.length === 0）且 depth >= 10 时，才进入结局判定
-    // 不是所有 depth === 10 的场景都应该是结局，只有叶子节点才是
-    const isLeafNode = nextScene.isEnding || nextScene.choices.length === 0;
-    if (isLeafNode && depth >= 10) {
-      // 叶子节点且深度>=10，进入结局判定
-      return this.getEnding();
-    }
-    
-    // 如果不是叶子节点，或者深度<10，继续游戏
-    return nextScene;
+    return this.matchSceneByPath(path, depth);
   }
 
   // 路径匹配函数 - 根据完整路径决定场景
@@ -2981,30 +2886,35 @@ export class LLMService {
       return this.match1CBranch(path, depth);
     }
 
-    // 默认：如果路径不匹配，返回默认场景（由 getNextSceneByPath() 统一判断是否为叶子节点）
+    // 默认：如果路径不匹配，返回结局（扩展到10层）
     if (depth > 10) {
-      return this.getDefaultNextScene(path, depth);
+      return this.getEnding();
     }
 
-    return SCENE_0_PROLOGUE;
+    // 修复：matcher 未命中时返回合理兜底结局，而不是回到序章
+    return this.getEnding();
   }
 
-  // 1A分支树匹配 - 完整的8-9层树状结构
+  // 1A分支树匹配 - 完整的10层树状结构
   private match1ABranch(path: string[], depth: number): SceneData {
-    const pathStr = path.join('->');
     const lastChoice = path[path.length - 1];
+
+    // 第1层：序章选择后进入1A分支（已在 matchSceneByPath 处理，这里作为兜底）
+    if (depth === 1) {
+      return SCENE_1A_PANIC;
+    }
 
     // 第2层
     if (depth === 2) {
-      if (path[1] === '1a_1') return SCENE_1A_LIFE; // 试图忘记
-      if (path[1] === '1a_1b') return SCENE_1A_LIFE; // 开始内疚
-      if (path[1] === '1a_1c') return SCENE_1A_TRY_CHANGE; // 决定改变（直接进入改变路线）
+      if (path[1] === '1a_1') return SCENE_1A_LIFE;
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第3层 - 根据1A_LIFE的选择分支
     if (depth === 3) {
       if (lastChoice === '1a_2') return SCENE_1A_DEEP_WORK;
       if (lastChoice === '1a_3') return SCENE_1A_TRY_CHANGE;
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第4层 - 深度分支
@@ -3015,6 +2925,7 @@ export class LLMService {
       if (lastChoice === '1a_3b') return SCENE_1A_OBSERVE;
       if (lastChoice === '1a_4') return SCENE_1A_CONFRONT;
       if (lastChoice === '1a_5') return SCENE_1A_OBSERVE;
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第5层
@@ -3027,6 +2938,7 @@ export class LLMService {
       if (lastChoice === '1a_7') return SCENE_1A_5B_AVOID_AGAIN;
       if (lastChoice === '1a_8') return SCENE_1A_ELEVATOR_TALK;
       if (lastChoice === '1a_9') return SCENE_1A_STALKING;
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第6层
@@ -3040,6 +2952,7 @@ export class LLMService {
       if (lastChoice === '1a_5c') return SCENE_1A_6B_ELEVATOR_CONTINUE;
       if (lastChoice === '1a_5d') return SCENE_1A_7B_STALKING_DISCOVERED;
       if (lastChoice === '1a_6') return SCENE_1A_FIRST_MEET; // 从CONFRONT来的
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第7层
@@ -3062,6 +2975,7 @@ export class LLMService {
       // 从SCENE_1A_STALKING来的选择
       if (lastChoice === '1a_9a') return SCENE_1A_8A_CONFESSION;
       if (lastChoice === '1a_9b') return SCENE_1A_8B_FINAL_ESCAPE;
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第8层 - 接近结局
@@ -3070,14 +2984,12 @@ export class LLMService {
       if (lastChoice === '1a_7a') return SCENE_1A_8A_CONFESSION;
       if (lastChoice === '1a_7b') return SCENE_1A_8A_CONFESSION;
       // 从SCENE_1A_8A_CONFESSION来的选择
-      if (lastChoice === '1a_8a') {
-        // 继续到第9层，不直接结局
-        return SCENE_1A_9A_REUNION_ATTEMPT;
-      }
+      if (lastChoice === '1a_8a') return SCENE_1A_9A_REUNION_ATTEMPT;
       if (lastChoice === '1a_8b') return SCENE_1A_9A_REUNION_ATTEMPT;
       // 从SCENE_1A_8B_FINAL_ESCAPE来的选择
       if (lastChoice === '1a_8c') return SCENE_1A_9B_FINAL_GOODBYE;
       if (lastChoice === '1a_8d') return SCENE_1A_9C_LAST_MESSAGE;
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第9层 - 继续分支
@@ -3088,235 +3000,282 @@ export class LLMService {
       if (lastChoice === '1a_9c2') return SCENE_1A_10D_FINAL_SEARCH; // 进入第10层
       if (lastChoice === '1a_9d') return SCENE_1A_10A_FINAL_BLESSING;
       if (lastChoice === '1a_9e') return SCENE_1A_10B_FINAL_CONFESSION;
+      return this.getEnding(); // 未命中返回结局
     }
 
-    // 第10层及以后 - 返回场景，由 getNextSceneByPath() 统一判断是否为叶子节点
-    // 注意：不是所有 depth === 10 的场景都应该是结局，只有叶子节点才是
-    // 如果深度超过10层且没有匹配的场景，返回默认场景
+    // 第10层 - 最终结局
+    if (depth === 10) {
+      if (lastChoice === '1a_10a' || lastChoice === '1a_10b' || lastChoice === '1a_10c' || lastChoice === '1a_10d') {
+        return this.getEnding();
+      }
+      return this.getEnding(); // 未命中也返回结局
+    }
+
+    // 如果深度超过10层，直接返回结局
     if (depth > 10) {
-      return this.getDefaultNextScene(path, depth);
+      return this.getEnding();
     }
 
-    // 如果路径不匹配，尝试通用匹配
-    return this.getDefaultNextScene(path, depth);
+    // 如果路径不匹配，返回合理兜底结局
+    return this.getEnding();
   }
 
-  // 1B分支树匹配 - 完整的8-9层树状结构
+  // 1B分支树匹配 - 完整的10层树状结构
   private match1BBranch(path: string[], depth: number): SceneData {
-    const pathStr = path.join('->');
+    const lastChoice = path[path.length - 1];
+
+    // 第1层：序章选择后进入1B分支（已在 matchSceneByPath 处理，这里作为兜底）
+    if (depth === 1) {
+      return SCENE_1B_MESSAGE;
+    }
 
     // 第2层
     if (depth === 2) {
       if (path[1] === '1b_1') return SCENE_1B_DELETED;
       if (path[1] === '1b_2') return SCENE_1B_CHAT;
       if (path[1] === '1b_3') return SCENE_1B_COFFEE;
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第3层
     if (depth === 3) {
-      if (pathStr.includes('1b_1a')) return SCENE_1B_APOLOGY;
-      if (pathStr.includes('1b_1b')) return SCENE_1B_REGRET;
-      if (pathStr.includes('1b_2a')) return SCENE_1B_PLAN_MEET;
-      if (pathStr.includes('1b_2b')) return SCENE_1B_DEEP_CHAT;
-      if (pathStr.includes('1b_3a')) return SCENE_1B_COFFEE_TALK;
-      if (pathStr.includes('1b_3b')) return SCENE_2_REUNION;
+      if (lastChoice === '1b_1a') return SCENE_1B_APOLOGY;
+      if (lastChoice === '1b_1b') return SCENE_1B_REGRET;
+      if (lastChoice === '1b_2a') return SCENE_1B_PLAN_MEET;
+      if (lastChoice === '1b_2b') return SCENE_1B_DEEP_CHAT;
+      if (lastChoice === '1b_3a') return SCENE_1B_COFFEE_TALK;
+      if (lastChoice === '1b_3b') return SCENE_2_REUNION;
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第4层
     if (depth === 4) {
-      if (pathStr.includes('1b_1aa')) return SCENE_1B_4A_DELETED_REGRET;
-      if (pathStr.includes('1b_1ab')) return SCENE_1B_4A_DELETED_REGRET;
-      if (pathStr.includes('1b_1ac')) return SCENE_2_REUNION;
-      if (pathStr.includes('1b_1ad')) return SCENE_1B_4A_DELETED_REGRET;
-      if (pathStr.includes('1b_2aa')) return SCENE_1B_5A_MEET_PLAN;
-      if (pathStr.includes('1b_2ab')) return SCENE_1B_4B_CHAT_DEEPEN;
-      if (pathStr.includes('1b_2ac')) return SCENE_1B_6A_COFFEE_CONVERSATION;
-      if (pathStr.includes('1b_2ad')) return SCENE_2_REUNION;
-      if (pathStr.includes('1b_3c')) return SCENE_1B_REGULAR_MEET;
-      if (pathStr.includes('1b_3d')) return SCENE_2_REUNION;
+      if (lastChoice === '1b_1aa') return SCENE_1B_4A_DELETED_REGRET;
+      if (lastChoice === '1b_1ab') return SCENE_1B_4A_DELETED_REGRET;
+      if (lastChoice === '1b_1ac') return SCENE_2_REUNION;
+      if (lastChoice === '1b_1ad') return SCENE_1B_4A_DELETED_REGRET;
+      if (lastChoice === '1b_2aa') return SCENE_1B_5A_MEET_PLAN;
+      if (lastChoice === '1b_2ab') return SCENE_1B_4B_CHAT_DEEPEN;
+      if (lastChoice === '1b_2ac') return SCENE_1B_6A_COFFEE_CONVERSATION;
+      if (lastChoice === '1b_2ad') return SCENE_2_REUNION;
+      if (lastChoice === '1b_3c') return SCENE_1B_REGULAR_MEET;
+      if (lastChoice === '1b_3d') return SCENE_2_REUNION;
       // SCENE_2_REUNION的选择（2_1, 2_2, 2_3）
-      if (pathStr.includes('2_1')) return SCENE_2_1_AWKWARD;
-      if (pathStr.includes('2_2')) return SCENE_2_2_RECOGNITION;
-      if (pathStr.includes('2_3')) return SCENE_2_3_ESCAPE;
+      if (lastChoice === '2_1') return SCENE_2_1_AWKWARD;
+      if (lastChoice === '2_2') return SCENE_2_2_RECOGNITION;
+      if (lastChoice === '2_3') return SCENE_2_3_ESCAPE;
       // SCENE_3_LUNCH的选择（3_1, 3_2, 3_3）
-      if (pathStr.includes('3_1')) return SCENE_3_1_LUNCH_TALK;
-      if (pathStr.includes('3_2')) return SCENE_3_2_REJECTION;
-      if (pathStr.includes('3_3')) return SCENE_3_3_APOLOGY;
+      if (lastChoice === '3_1') return SCENE_3_1_LUNCH_TALK;
+      if (lastChoice === '3_2') return SCENE_3_2_REJECTION;
+      if (lastChoice === '3_3') return SCENE_3_3_APOLOGY;
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第5层
     if (depth === 5) {
-      if (pathStr.includes('1b_4a')) return SCENE_1B_APOLOGY;
-      if (pathStr.includes('1b_4b')) return SCENE_1B_4A_DELETED_REGRET;
-      if (pathStr.includes('1b_4c')) return SCENE_1B_5A_MEET_PLAN;
-      if (pathStr.includes('1b_4d')) return SCENE_1B_4B_CHAT_DEEPEN;
-      if (pathStr.includes('1b_5a')) return SCENE_1B_6A_COFFEE_CONVERSATION;
-      if (pathStr.includes('1b_5b')) return SCENE_1B_6A_COFFEE_CONVERSATION;
+      if (lastChoice === '1b_4a') return SCENE_1B_APOLOGY;
+      if (lastChoice === '1b_4b') return SCENE_1B_4A_DELETED_REGRET;
+      if (lastChoice === '1b_4c') return SCENE_1B_5A_MEET_PLAN;
+      if (lastChoice === '1b_4d') return SCENE_1B_4B_CHAT_DEEPEN;
+      if (lastChoice === '1b_5a') return SCENE_1B_6A_COFFEE_CONVERSATION;
+      if (lastChoice === '1b_5b') return SCENE_1B_6A_COFFEE_CONVERSATION;
       // SCENE_2_1_AWKWARD的选择（2_1a, 2_1b）
-      if (pathStr.includes('2_1a')) return SCENE_2_1A_CONFESSION;
-      if (pathStr.includes('2_1b')) return SCENE_2_1B_CONTINUE_ESCAPE;
+      if (lastChoice === '2_1a') return SCENE_2_1A_CONFESSION;
+      if (lastChoice === '2_1b') return SCENE_2_1B_CONTINUE_ESCAPE;
       // SCENE_2_2_RECOGNITION的选择（2_2a, 2_2b）
-      if (pathStr.includes('2_2a')) return SCENE_2_2A_COFFEE_INVITATION;
-      if (pathStr.includes('2_2b')) return SCENE_2_2B_HESITATE;
+      if (lastChoice === '2_2a') return SCENE_2_2A_COFFEE_INVITATION;
+      if (lastChoice === '2_2b') return SCENE_2_2B_HESITATE;
       // SCENE_2_3_ESCAPE的选择（2_3a, 2_3b）
-      if (pathStr.includes('2_3a')) return SCENE_2_3A_TURN_BACK;
-      if (pathStr.includes('2_3b')) return SCENE_2_3B_FINAL_ESCAPE;
+      if (lastChoice === '2_3a') return SCENE_2_3A_TURN_BACK;
+      if (lastChoice === '2_3b') return SCENE_2_3B_FINAL_ESCAPE;
       // SCENE_3_1_LUNCH_TALK的选择（3_1a, 3_1b）
-      if (pathStr.includes('3_1a')) return SCENE_3_1A_AGREE;
-      if (pathStr.includes('3_1b')) return SCENE_3_1B_HESITATE;
+      if (lastChoice === '3_1a') return SCENE_3_1A_AGREE;
+      if (lastChoice === '3_1b') return SCENE_3_1B_HESITATE;
       // SCENE_3_2_REJECTION的选择（3_2a, 3_2b）
-      if (pathStr.includes('3_2a')) return SCENE_3_2A_REGRET;
-      if (pathStr.includes('3_2b')) return SCENE_3_2B_FINAL_ESCAPE;
+      if (lastChoice === '3_2a') return SCENE_3_2A_REGRET;
+      if (lastChoice === '3_2b') return SCENE_3_2B_FINAL_ESCAPE;
       // SCENE_3_3_APOLOGY的选择（3_3a, 3_3b）
-      if (pathStr.includes('3_3a')) return SCENE_3_3A_NEW_START;
-      if (pathStr.includes('3_3b')) return SCENE_3_3B_FEAR;
+      if (lastChoice === '3_3a') return SCENE_3_3A_NEW_START;
+      if (lastChoice === '3_3b') return SCENE_3_3B_FEAR;
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第6层
     if (depth === 6) {
-      if (pathStr.includes('1b_6a')) return SCENE_1B_7A_REGULAR_MEETINGS;
-      if (pathStr.includes('1b_6b')) return SCENE_1B_7A_REGULAR_MEETINGS;
+      if (lastChoice === '1b_6a') return SCENE_1B_7A_REGULAR_MEETINGS;
+      if (lastChoice === '1b_6b') return SCENE_1B_7A_REGULAR_MEETINGS;
       // SCENE_2_1A_CONFESSION的选择（2_1aa, 2_1ab）
-      if (pathStr.includes('2_1aa')) return SCENE_1B_9A_FIRST_DATE; // 复用已有场景
-      if (pathStr.includes('2_1ab')) return SCENE_1B_9B_FEAR_CONFRONTATION; // 复用已有场景
+      if (lastChoice === '2_1aa') return SCENE_1B_9A_FIRST_DATE; // 复用已有场景
+      if (lastChoice === '2_1ab') return SCENE_1B_9B_FEAR_CONFRONTATION; // 复用已有场景
       // SCENE_2_1B_CONTINUE_ESCAPE的选择（2_1ba, 2_1bb）
-      if (pathStr.includes('2_1ba')) return SCENE_2_3A_TURN_BACK; // 复用已有场景
-      if (pathStr.includes('2_1bb')) return SCENE_2_3B_FINAL_ESCAPE; // 复用已有场景
+      if (lastChoice === '2_1ba') return SCENE_2_3A_TURN_BACK; // 复用已有场景
+      if (lastChoice === '2_1bb') return SCENE_2_3B_FINAL_ESCAPE; // 复用已有场景
       // SCENE_2_2A_COFFEE_INVITATION的选择（2_2aa, 2_2ab）
-      if (pathStr.includes('2_2aa')) return SCENE_1B_9A_FIRST_DATE; // 复用已有场景
-      if (pathStr.includes('2_2ab')) return SCENE_1B_9B_FEAR_CONFRONTATION; // 复用已有场景
+      if (lastChoice === '2_2aa') return SCENE_1B_9A_FIRST_DATE; // 复用已有场景
+      if (lastChoice === '2_2ab') return SCENE_1B_9B_FEAR_CONFRONTATION; // 复用已有场景
       // SCENE_2_2B_HESITATE的选择（2_2ba, 2_2bb）
-      if (pathStr.includes('2_2ba')) return SCENE_1B_9C_FULL_CONFESSION; // 复用已有场景
-      if (pathStr.includes('2_2bb')) return SCENE_2_3B_FINAL_ESCAPE; // 复用已有场景
+      if (lastChoice === '2_2ba') return SCENE_1B_9C_FULL_CONFESSION; // 复用已有场景
+      if (lastChoice === '2_2bb') return SCENE_2_3B_FINAL_ESCAPE; // 复用已有场景
       // SCENE_2_3A_TURN_BACK的选择（2_3aa, 2_3ab）
-      if (pathStr.includes('2_3aa')) return SCENE_1B_9A_FIRST_DATE; // 复用已有场景
-      if (pathStr.includes('2_3ab')) return SCENE_2_2B_HESITATE; // 复用已有场景
+      if (lastChoice === '2_3aa') return SCENE_1B_9A_FIRST_DATE; // 复用已有场景
+      if (lastChoice === '2_3ab') return SCENE_2_2B_HESITATE; // 复用已有场景
       // SCENE_2_3B_FINAL_ESCAPE的选择（2_3ba, 2_3bb）
-      if (pathStr.includes('2_3ba')) return SCENE_1A_10C_ACCEPTANCE; // 复用已有场景
-      if (pathStr.includes('2_3bb')) return SCENE_1A_10D_FINAL_SEARCH; // 复用已有场景
+      if (lastChoice === '2_3ba') return SCENE_1A_10C_ACCEPTANCE; // 复用已有场景
+      if (lastChoice === '2_3bb') return SCENE_1A_10D_FINAL_SEARCH; // 复用已有场景
       // SCENE_3_1A_AGREE的选择（3_1aa, 3_1ab）
-      if (pathStr.includes('3_1aa')) return SCENE_1B_9A_FIRST_DATE; // 复用已有场景
-      if (pathStr.includes('3_1ab')) return SCENE_1B_9B_FEAR_CONFRONTATION; // 复用已有场景
+      if (lastChoice === '3_1aa') return SCENE_1B_9A_FIRST_DATE; // 复用已有场景
+      if (lastChoice === '3_1ab') return SCENE_1B_9B_FEAR_CONFRONTATION; // 复用已有场景
       // SCENE_3_1B_HESITATE的选择（3_1ba, 3_1bb）
-      if (pathStr.includes('3_1ba')) return SCENE_1B_9C_FULL_CONFESSION; // 复用已有场景
-      if (pathStr.includes('3_1bb')) return SCENE_2_3B_FINAL_ESCAPE; // 复用已有场景
+      if (lastChoice === '3_1ba') return SCENE_1B_9C_FULL_CONFESSION; // 复用已有场景
+      if (lastChoice === '3_1bb') return SCENE_2_3B_FINAL_ESCAPE; // 复用已有场景
       // SCENE_3_2A_REGRET的选择（3_2aa, 3_2ab）
-      if (pathStr.includes('3_2aa')) return SCENE_1B_9C_FULL_CONFESSION; // 复用已有场景
-      if (pathStr.includes('3_2ab')) return SCENE_2_3B_FINAL_ESCAPE; // 复用已有场景
+      if (lastChoice === '3_2aa') return SCENE_1B_9C_FULL_CONFESSION; // 复用已有场景
+      if (lastChoice === '3_2ab') return SCENE_2_3B_FINAL_ESCAPE; // 复用已有场景
       // SCENE_3_2B_FINAL_ESCAPE的选择（3_2ba, 3_2bb）
-      if (pathStr.includes('3_2ba')) return SCENE_1A_10C_ACCEPTANCE; // 复用已有场景
-      if (pathStr.includes('3_2bb')) return SCENE_1A_10D_FINAL_SEARCH; // 复用已有场景
+      if (lastChoice === '3_2ba') return SCENE_1A_10C_ACCEPTANCE; // 复用已有场景
+      if (lastChoice === '3_2bb') return SCENE_1A_10D_FINAL_SEARCH; // 复用已有场景
       // SCENE_3_3A_NEW_START的选择（3_3aa, 3_3ab）
-      if (pathStr.includes('3_3aa')) return SCENE_1B_9A_FIRST_DATE; // 复用已有场景
-      if (pathStr.includes('3_3ab')) return SCENE_1B_9B_FEAR_CONFRONTATION; // 复用已有场景
+      if (lastChoice === '3_3aa') return SCENE_1B_9A_FIRST_DATE; // 复用已有场景
+      if (lastChoice === '3_3ab') return SCENE_1B_9B_FEAR_CONFRONTATION; // 复用已有场景
       // SCENE_3_3B_FEAR的选择（3_3ba, 3_3bb）
-      if (pathStr.includes('3_3ba')) return SCENE_1B_9C_FULL_CONFESSION; // 复用已有场景
-      if (pathStr.includes('3_3bb')) return SCENE_1B_10B_FRIENDSHIP_CHOICE; // 复用已有场景
+      if (lastChoice === '3_3ba') return SCENE_1B_9C_FULL_CONFESSION; // 复用已有场景
+      if (lastChoice === '3_3bb') return SCENE_1B_10B_FRIENDSHIP_CHOICE; // 复用已有场景
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第7层
     if (depth === 7) {
-      if (pathStr.includes('1b_7a')) return SCENE_1B_8A_RELATIONSHIP_DEFINE;
-      if (pathStr.includes('1b_7b')) return SCENE_1B_8A_RELATIONSHIP_DEFINE;
+      if (lastChoice === '1b_7a') return SCENE_1B_8A_RELATIONSHIP_DEFINE;
+      if (lastChoice === '1b_7b') return SCENE_1B_8A_RELATIONSHIP_DEFINE;
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第8层 - 继续分支
     if (depth === 8) {
-      if (pathStr.includes('1b_8a')) return SCENE_1B_9A_FIRST_DATE;
-      if (pathStr.includes('1b_8b')) return SCENE_1B_9B_FEAR_CONFRONTATION;
-      if (pathStr.includes('1b_8c')) return SCENE_1B_9C_FULL_CONFESSION;
+      if (lastChoice === '1b_8a') return SCENE_1B_9A_FIRST_DATE;
+      if (lastChoice === '1b_8b') return SCENE_1B_9B_FEAR_CONFRONTATION;
+      if (lastChoice === '1b_8c') return SCENE_1B_9C_FULL_CONFESSION;
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第9层 - 继续分支
     if (depth === 9) {
-      if (pathStr.includes('1b_9a')) return SCENE_1B_10A_RELATIONSHIP_GROWTH;
-      if (pathStr.includes('1b_9b')) return SCENE_1B_10A_RELATIONSHIP_GROWTH;
-      if (pathStr.includes('1b_9c')) return SCENE_1B_10A_RELATIONSHIP_GROWTH;
-      if (pathStr.includes('1b_9d')) return SCENE_1B_10B_FRIENDSHIP_CHOICE;
-      if (pathStr.includes('1b_9e')) return SCENE_1B_10A_RELATIONSHIP_GROWTH;
-      if (pathStr.includes('1b_9f')) return SCENE_1B_10B_FRIENDSHIP_CHOICE;
+      if (lastChoice === '1b_9a') return SCENE_1B_10A_RELATIONSHIP_GROWTH;
+      if (lastChoice === '1b_9b') return SCENE_1B_10A_RELATIONSHIP_GROWTH;
+      if (lastChoice === '1b_9c') return SCENE_1B_10A_RELATIONSHIP_GROWTH;
+      if (lastChoice === '1b_9d') return SCENE_1B_10B_FRIENDSHIP_CHOICE;
+      if (lastChoice === '1b_9e') return SCENE_1B_10A_RELATIONSHIP_GROWTH;
+      if (lastChoice === '1b_9f') return SCENE_1B_10B_FRIENDSHIP_CHOICE;
+      return this.getEnding(); // 未命中返回结局
     }
 
-    // 第10层及以后 - 返回场景，由 getNextSceneByPath() 统一判断是否为叶子节点
-    // 注意：不是所有 depth === 10 的场景都应该是结局，只有叶子节点才是
+    // 第10层 - 最终结局
+    if (depth === 10) {
+      if (lastChoice === '1b_10a' || lastChoice === '1b_10b') {
+        return this.getEnding();
+      }
+      return this.getEnding(); // 未命中也返回结局
+    }
+
+    // 如果深度超过10层，直接返回结局
     if (depth > 10) {
-      return this.getDefaultNextScene(path, depth);
+      return this.getEnding();
     }
 
-    return this.getDefaultNextScene(path, depth);
+    // 如果路径不匹配，返回合理兜底结局
+    return this.getEnding();
   }
 
-  // 1C分支树匹配 - 完整的8-9层树状结构
+  // 1C分支树匹配 - 完整的10层树状结构
   private match1CBranch(path: string[], depth: number): SceneData {
-    const pathStr = path.join('->');
+    const lastChoice = path[path.length - 1];
+
+    // 第1层：序章选择后进入1C分支（已在 matchSceneByPath 处理，这里作为兜底）
+    if (depth === 1) {
+      return SCENE_1C_HESITATE;
+    }
 
     // 第2层
     if (depth === 2) {
-      if (path[1] === '1c_1') return SCENE_1C_GUILT; // 删除联系方式
-      if (path[1] === '1c_1b') return SCENE_1C_GUILT; // 保留联系方式
-      if (path[1] === '1c_1c') return SCENE_1C_GUILT; // 开始观察
+      if (path[1] === '1c_1') return SCENE_1C_GUILT;
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第3层
     if (depth === 3) {
-      if (pathStr.includes('1c_2')) return SCENE_1C_FIRST_MESSAGE;
-      if (pathStr.includes('1c_3')) return SCENE_1C_STALKING;
+      if (lastChoice === '1c_2') return SCENE_1C_FIRST_MESSAGE;
+      if (lastChoice === '1c_3') return SCENE_1C_STALKING;
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第4层
     if (depth === 4) {
-      if (pathStr.includes('1c_2a')) return SCENE_1C_MEETING;
-      if (pathStr.includes('1c_2b')) return SCENE_1C_4A_GUILT_OBSERVE;
-      if (pathStr.includes('1c_3a')) return SCENE_1B_APOLOGY;
-      if (pathStr.includes('1c_3b')) return SCENE_1C_4A_GUILT_OBSERVE;
-      if (pathStr.includes('1c_4')) return SCENE_1C_MEETING;
-      if (pathStr.includes('1c_5')) return SCENE_1C_4A_GUILT_OBSERVE;
+      if (lastChoice === '1c_2a') return SCENE_1C_MEETING;
+      if (lastChoice === '1c_2b') return SCENE_1C_4A_GUILT_OBSERVE;
+      if (lastChoice === '1c_3a') return SCENE_1B_APOLOGY;
+      if (lastChoice === '1c_3b') return SCENE_1C_4A_GUILT_OBSERVE;
+      if (lastChoice === '1c_4') return SCENE_1C_MEETING;
+      if (lastChoice === '1c_5') return SCENE_1C_4A_GUILT_OBSERVE;
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第5层
     if (depth === 5) {
-      if (pathStr.includes('1c_4c')) return SCENE_1C_5A_FIRST_MEETING;
-      if (pathStr.includes('1c_4d')) return SCENE_1C_4B_FIRST_MESSAGE;
-      if (pathStr.includes('1c_5a')) return SCENE_1C_6A_DEEP_TALK;
-      if (pathStr.includes('1c_5b')) return SCENE_1C_FRIENDSHIP;
+      if (lastChoice === '1c_4c') return SCENE_1C_5A_FIRST_MEETING;
+      if (lastChoice === '1c_4d') return SCENE_1C_4B_FIRST_MESSAGE;
+      if (lastChoice === '1c_5a') return SCENE_1C_6A_DEEP_TALK;
+      if (lastChoice === '1c_5b') return SCENE_1C_FRIENDSHIP;
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第6层
     if (depth === 6) {
-      if (pathStr.includes('1c_6a')) return SCENE_1C_7A_RELATIONSHIP_GROW;
-      if (pathStr.includes('1c_6b')) return SCENE_1C_7A_RELATIONSHIP_GROW;
+      if (lastChoice === '1c_6a') return SCENE_1C_7A_RELATIONSHIP_GROW;
+      if (lastChoice === '1c_6b') return SCENE_1C_7A_RELATIONSHIP_GROW;
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第7层
     if (depth === 7) {
-      if (pathStr.includes('1c_7a')) return SCENE_1C_8A_FINAL_CHOICE;
-      if (pathStr.includes('1c_7b')) return SCENE_1C_8A_FINAL_CHOICE;
+      if (lastChoice === '1c_7a') return SCENE_1C_8A_FINAL_CHOICE;
+      if (lastChoice === '1c_7b') return SCENE_1C_8A_FINAL_CHOICE;
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第8层 - 继续分支
     if (depth === 8) {
-      if (pathStr.includes('1c_8a')) return SCENE_1C_9A_NEW_BEGINNING;
-      if (pathStr.includes('1c_8b')) return SCENE_1C_9B_FEAR_AGAIN;
-      if (pathStr.includes('1c_8c')) return SCENE_1C_9C_700_APOLOGY;
+      if (lastChoice === '1c_8a') return SCENE_1C_9A_NEW_BEGINNING;
+      if (lastChoice === '1c_8b') return SCENE_1C_9B_FEAR_AGAIN;
+      if (lastChoice === '1c_8c') return SCENE_1C_9C_700_APOLOGY;
+      return this.getEnding(); // 未命中返回结局
     }
 
     // 第9层 - 继续分支
     if (depth === 9) {
-      if (pathStr.includes('1c_9a')) return SCENE_1C_10A_RELATIONSHIP_DEEPEN;
-      if (pathStr.includes('1c_9b')) return SCENE_1C_10B_FRIENDSHIP_PATH;
-      if (pathStr.includes('1c_9c')) return SCENE_1C_10A_RELATIONSHIP_DEEPEN;
-      if (pathStr.includes('1c_9d')) return SCENE_1C_10B_FRIENDSHIP_PATH;
-      if (pathStr.includes('1c_9e')) return SCENE_1C_10A_RELATIONSHIP_DEEPEN;
-      if (pathStr.includes('1c_9f')) return SCENE_1C_10B_FRIENDSHIP_PATH;
+      if (lastChoice === '1c_9a') return SCENE_1C_10A_RELATIONSHIP_DEEPEN;
+      if (lastChoice === '1c_9b') return SCENE_1C_10B_FRIENDSHIP_PATH;
+      if (lastChoice === '1c_9c') return SCENE_1C_10A_RELATIONSHIP_DEEPEN;
+      if (lastChoice === '1c_9d') return SCENE_1C_10B_FRIENDSHIP_PATH;
+      if (lastChoice === '1c_9e') return SCENE_1C_10A_RELATIONSHIP_DEEPEN;
+      if (lastChoice === '1c_9f') return SCENE_1C_10B_FRIENDSHIP_PATH;
+      return this.getEnding(); // 未命中返回结局
     }
 
-    // 第10层及以后 - 返回场景，由 getNextSceneByPath() 统一判断是否为叶子节点
-    // 注意：不是所有 depth === 10 的场景都应该是结局，只有叶子节点才是
+    // 第10层 - 最终结局
+    if (depth === 10) {
+      if (lastChoice === '1c_10a' || lastChoice === '1c_10b') {
+        return this.getEnding();
+      }
+      return this.getEnding(); // 未命中也返回结局
+    }
+
+    // 如果深度超过10层，直接返回结局
     if (depth > 10) {
-      return this.getDefaultNextScene(path, depth);
+      return this.getEnding();
     }
 
-    return this.getDefaultNextScene(path, depth);
+    // 如果路径不匹配，返回合理兜底结局
+    return this.getEnding();
   }
 
   // 根据路径获取场景（辅助函数）
@@ -3328,16 +3287,9 @@ export class LLMService {
 
   // 获取默认下一个场景（向后兼容）
   private getDefaultNextScene(path: string[], depth: number): SceneData {
-    // 如果深度>=10，返回一个标记为叶子节点的场景，让 getNextSceneByPath() 统一判断
-    // 注意：不是所有 depth >= 10 的场景都应该是结局，只有叶子节点才是
-    if (depth >= 10) {
-      // 返回一个标记为叶子节点的场景（没有选择，表示路径结束）
-      return {
-        narrative: "（故事继续...）",
-        backgroundDescription: "default scene",
-        choices: [], // 空选择数组表示这是叶子节点
-        isEnding: true // 标记为结局节点
-      };
+    // 如果深度足够，进入结局
+    if (depth > 10) {
+      return this.getEnding();
     }
 
     // 否则返回通用场景
@@ -3347,14 +3299,17 @@ export class LLMService {
   // 旧的getNextScene方法（保留用于向后兼容）
   private getNextScene(): SceneData {
     const stage = this.state.stage;
+
     const branch = this.state.branch;
 
     // 序章后分支（三种不同的逃跑方式）
     if (stage === 1) {
+
       if (branch === 'cold') return SCENE_1A_PANIC;
       if (branch === 'friend') return SCENE_1B_MESSAGE;
       return SCENE_1C_HESITATE; // main 分支
     }
+
 
     // ========== 1A分支（cold路线）==========
     if (branch === 'cold') {
@@ -3391,6 +3346,7 @@ export class LLMService {
         }
         if (this.state.specialEvents.includes('normal_meet')) {
       return SCENE_3_LUNCH;
+
         }
         return SCENE_2_REUNION;
       }
@@ -3417,6 +3373,7 @@ export class LLMService {
     // ========== 1B分支（friend路线）==========
     if (branch === 'friend') {
     if (stage === 2) {
+
         // 根据1B的选择决定下一步
         if (this.state.specialEvents.includes('1b_1')) {
           return SCENE_1B_DELETED;
@@ -3439,6 +3396,7 @@ export class LLMService {
           return SCENE_1B_COFFEE_TALK;
         }
       return SCENE_2_REUNION;
+
       }
       if (stage === 4) {
         if (this.state.specialEvents.includes('1b_regular_meet')) {
@@ -3467,6 +3425,7 @@ export class LLMService {
     if (branch === 'main') {
       if (stage === 2) return SCENE_1C_GUILT;
     if (stage === 3) {
+
         if (this.state.specialEvents.includes('1c_first_message')) {
           return SCENE_1C_FIRST_MESSAGE;
         } else if (this.state.specialEvents.includes('1c_stalking')) {
@@ -3491,6 +3450,7 @@ export class LLMService {
         if (!this.state.specialEvents.includes('had_lunch')) {
           this.state.specialEvents.push('had_lunch');
       return SCENE_3_LUNCH;
+
         }
         return SCENE_2_REUNION;
       }
@@ -3528,11 +3488,14 @@ export class LLMService {
       return this.getEnding();
     }
 
-    return SCENE_0_PROLOGUE;
+    // 修复：未匹配到场景时返回合理兜底结局，而不是回到序章
+    return this.getEnding();
   }
 
   private getEnding(): SceneData {
+
     const { intimacy, relationshipType, hasConfessed } = this.state;
+
 
     // 基于亲密度判断结局（主要判断标准）
     // 真爱结局：高亲密度(80+) + 浪漫关系 + 坦白过
@@ -3540,15 +3503,18 @@ export class LLMService {
       return ENDING_TRUE_LOVE;
     }
 
+
     // 救赎结局：中高亲密度(60-79) + 有坦白或高诚实
     if (intimacy >= 60 && intimacy < 80 && (hasConfessed || this.state.honesty >= 6)) {
       return ENDING_REDEMPTION;
     }
 
+
     // 挚友结局：中亲密度(40-79) + 朋友关系
     if (intimacy >= 40 && intimacy < 80 && relationshipType === 'friend') {
       return ENDING_FRIEND;
     }
+
 
     // 遗憾结局：低亲密度(20-39) 或 中等亲密度但关系复杂
     if (intimacy >= 20 && intimacy < 40) {
@@ -3560,6 +3526,7 @@ export class LLMService {
       return ENDING_STRANGER;
     }
 
+
     // 默认：根据亲密度范围判断
     if (intimacy >= 80) {
       return ENDING_TRUE_LOVE;
@@ -3569,6 +3536,7 @@ export class LLMService {
       return relationshipType === 'friend' ? ENDING_FRIEND : ENDING_REGRET;
     } else {
     return ENDING_REGRET;
+
     }
   }
 
@@ -3577,5 +3545,6 @@ export class LLMService {
     return { ...this.state };
   }
 }
+
 
 export const llmService = new LLMService();
