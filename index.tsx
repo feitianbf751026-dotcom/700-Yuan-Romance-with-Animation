@@ -1,10 +1,11 @@
 import React from 'react';
-import { createRoot } from 'react-dom/client'; // 修复：使用解构导入
+import { createRoot } from 'react-dom/client';
 import App from './App';
+import './styles/index.css';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
-  throw new Error("Could not find root element to mount to");
+  throw new Error('Could not find root element to mount to');
 }
 
 const root = createRoot(rootElement);

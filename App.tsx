@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import StartScreen from './components/StartScreen';
 import GameUI from './components/GameUI';
-import FireflyPet from './components/FireflyPet';
 import { llmService } from './services/llmService';
 import { GameState, Choice } from './types';
 
 const App: React.FC = () => {
+  const isDev = import.meta.env.DEV;
   const [gameState, setGameState] = useState<GameState>({
     history: [],
     currentScene: null,
@@ -14,6 +14,12 @@ const App: React.FC = () => {
     gameEnded: false,
     backgroundImageUrl: ''
   });
+
+  const reportError = (logMessage: string, userMessage: string, error: unknown) => {
+    if (!isDev) return;
+    console.error(logMessage, error);
+    alert(userMessage);
+  };
 
   const handleStartGame = async () => {
     setGameState(prev => ({ ...prev, isLoading: true }));
@@ -30,14 +36,13 @@ const App: React.FC = () => {
         }]
       }));
     } catch (error) {
-      console.error("Error starting game:", error);
-      alert("游戏启动失败，请刷新重试。");
+      reportError("Error starting game:", "游戏启动失败，请刷新重试。", error);
       setGameState(prev => ({ ...prev, isLoading: false }));
     }
   };
 
   const handleChoice = async (choice: Choice) => {
-    if (!gameState.currentScene) return;
+    if (!gameState.currentScene || gameState.isLoading) return;
 
     setGameState(prev => ({ ...prev, isLoading: true }));
     
@@ -61,8 +66,7 @@ const App: React.FC = () => {
         ]
       }));
     } catch (error) {
-      console.error("Error generating next turn:", error);
-      alert("剧情生成失败，正在尝试恢复...");
+      reportError("Error generating next turn:", "剧情生成失败，正在尝试恢复...", error);
       setGameState(prev => ({ ...prev, isLoading: false }));
     }
   };
@@ -80,9 +84,6 @@ const App: React.FC = () => {
                 isLoading={gameState.isLoading}
             />
            )}
-           
-           {/* 流萤桌面宠物 - 放在最后，确保在最上层 */}
-           <FireflyPet />
            
            {gameState.gameEnded && gameState.currentScene && (
              <div className="absolute inset-0 bg-black/95 flex flex-col items-center justify-center z-50 p-8 text-center transition-opacity duration-1000">
@@ -109,15 +110,17 @@ const App: React.FC = () => {
                   >
                       重新开始
                   </button>
-                  <button 
-                      onClick={() => {
-                        const state = llmService.getState();
-                        alert(`调试信息：\n好感度: ${state.affection}\n勇气: ${state.courage}\n诚实: ${state.honesty}\n分支: ${state.branch}\n坦白: ${state.hasConfessed}`);
-                      }}
-                      className="px-10 py-4 border border-blue-500/30 hover:border-blue-400 hover:bg-blue-500/10 text-blue-300 text-lg tracking-[0.2em] transition-all duration-300 font-serif-sc"
-                  >
-                      查看数据
-                  </button>
+                  {isDev && (
+                    <button 
+                        onClick={() => {
+                          const state = llmService.getState();
+                          alert(`调试信息：\n好感度: ${state.affection}\n勇气: ${state.courage}\n诚实: ${state.honesty}\n分支: ${state.branch}\n坦白: ${state.hasConfessed}`);
+                        }}
+                        className="px-10 py-4 border border-blue-500/30 hover:border-blue-400 hover:bg-blue-500/10 text-blue-300 text-lg tracking-[0.2em] transition-all duration-300 font-serif-sc"
+                    >
+                        查看数据
+                    </button>
+                  )}
                 </div>
              </div>
            )}
