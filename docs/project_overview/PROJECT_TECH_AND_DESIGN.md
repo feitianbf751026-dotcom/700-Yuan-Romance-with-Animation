@@ -1,5 +1,7 @@
 # Project Tech and Design
 
+Last updated: 2025-01-27
+
 This document explains how the project is structured and which parts are sensitive to change.
 
 ## Purpose
@@ -7,10 +9,10 @@ This document explains how the project is structured and which parts are sensiti
 - Keep the runtime simple: no server is required; the story data lives in the repo.
 
 ## Architecture Overview
-- `App.tsx` owns game state and routes between StartScreen and GameUI.
+- `App.tsx` owns game state and routes between StartScreen and GameUI. It also renders `FireflyPet` component at the root level.
 - `components/StartScreen.tsx` renders the intro screen and start action.
 - `components/GameUI.tsx` renders the story UI and choices.
-- `components/FireflyPet.tsx` renders the desktop companion and must remain on top.
+- `components/FireflyPet.tsx` renders the desktop companion and must remain on top (rendered in `App.tsx`).
 - `services/llmService.ts` drives the story progression and state updates.
 - `services/scenes/` contains story scenes.
 - `services/pathMatcher/` handles branch routing by choice history.

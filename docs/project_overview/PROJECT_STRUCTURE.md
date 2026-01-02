@@ -10,7 +10,7 @@ This document describes the directory structure and organization of the 700 Yuan
 
 - **`index.html`** - HTML entry point. Contains the root `<div id="root">` where React mounts, and loads `index.tsx` as a module.
 - **`index.tsx`** - React entry point. Imports `App` component, loads `styles/index.css`, and mounts the app to the DOM.
-- **`App.tsx`** - Main application component. Manages game state (`GameState`), handles game flow (start, choices, endings), and renders `StartScreen` or `GameUI` based on state.
+- **`App.tsx`** - Main application component. Manages game state (`GameState`), handles game flow (start, choices, endings), and renders `StartScreen` or `GameUI` based on state. Also renders `FireflyPet` component at the root level to ensure it's always visible.
 - **`package.json`** - NPM package configuration. Defines scripts (`dev`, `build`, `preview`) and dependencies.
 - **`vite.config.ts`** - Vite build configuration. Sets `base: './'` for relative paths (required for Surge.sh deployment).
 - **`tsconfig.json`** - TypeScript compiler configuration.
