@@ -56,17 +56,21 @@ npm run preview
 
 ## Deployment
 
+### Live Site
+
+**线上地址：** https://700-yuan-romance.surge.sh/
+
+**部署平台：** Surge.sh
+
 ### Deploy to Surge.sh
 
-The project is currently deployed to Surge.sh at: **https://700-yuan-romance.surge.sh/**
-
-To deploy:
+To deploy or update the live site:
 
 ```bash
-# Build first
+# 1. Build the project
 npm run build
 
-# Deploy to Surge.sh
+# 2. Deploy to Surge.sh
 cd dist
 surge . 700-yuan-romance.surge.sh
 ```
@@ -76,6 +80,13 @@ surge . 700-yuan-romance.surge.sh
 npm install -g surge
 surge login
 ```
+
+**重新部署步骤：**
+1. 确保代码已提交到 Git（可选，但推荐）
+2. 运行 `npm run build` 构建项目
+3. 进入 `dist` 目录：`cd dist`
+4. 运行 `surge . 700-yuan-romance.surge.sh` 部署
+5. 部署完成后，访问 https://700-yuan-romance.surge.sh/ 验证
 
 ### Alternative: Deploy to Vercel
 

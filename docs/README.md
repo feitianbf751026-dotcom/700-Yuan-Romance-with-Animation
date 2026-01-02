@@ -4,6 +4,21 @@ Last updated: 2025-01-27
 
 This directory contains all project documentation. The root `README.md` provides a quick start guide.
 
+## Live Site
+
+**线上地址：** https://700-yuan-romance.surge.sh/
+
+**部署平台：** Surge.sh
+
+**重新部署：**
+```bash
+npm run build
+cd dist
+surge . 700-yuan-romance.surge.sh
+```
+
+See the root [`README.md`](../README.md) for detailed deployment instructions.
+
 ## Quick Links
 
 - [Project Structure Overview](./project_overview/PROJECT_STRUCTURE.md) - Directory structure and file organization
